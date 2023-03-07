@@ -1,17 +1,16 @@
 import ModalComponent from "@/components/ModalComponent";
 import {forwardRef, useImperativeHandle, useState} from "react";
-import {formatDate, trigger} from "@/helpers";
+import {createOperation, destroyOperation, formatDate, trigger, updateOperation} from "@/helpers";
 
 const OperationFormComponent = ({
 	modalId,
 	modalTitle,
-	endpoint,
 	method,
-	types,
-	recipients,
+	data,
 	onSubmitted,
 }, ref) => {
 
+	const { types, recipients } = data
 	const defaultValues = {
 		date: formatDate(new Date(), 'yyyy-MM-dd'),
 		amount: '',
@@ -30,8 +29,8 @@ const OperationFormComponent = ({
 			id: operation.id,
 			date: formatDate(operation.date, 'yyyy-MM-dd') || '',
 			amount: operation.amount || '',
-			type: operation.type.name || '',
-			recipient: operation.recipient.name || '',
+			type: operation.type || '',
+			recipient: operation.recipient || '',
 			detail: operation.detail || '',
 		})
 	}
@@ -62,54 +61,60 @@ const OperationFormComponent = ({
 	const handleSubmit = async (event) => {
 		setLoading(true)
 		event.preventDefault()
-		fetch(endpoint, {
-			method,
-			headers: {
-				'Content-Type': 'application/json',
-			},
-			body: JSON.stringify(formData)
+
+		let type = types.find(t => {
+			return t.toLowerCase() === formData.type.toLowerCase()
 		})
-			.then(response => response.json())
-			.then(result => {
-				showToast()
-				hideModal()
-				setFormData(defaultValues)
-				onSubmitted(result)
+		if (type) {
+			formData.type = type
+		}
+
+		let recipient = recipients.find(r => {
+			return r.toLowerCase() === formData.recipient.toLowerCase()
+		})
+		if (recipient) {
+			formData.recipient = recipient
+		}
+
+		if (method === 'create') {
+			createOperation({
+				id: Date.now(),
+				amount: formData.amount,
+				date: formData.date,
+				detail: formData.detail,
+				type: formData.type,
+				recipient: formData.recipient,
 			})
-			.catch(err => {
-				alert(`Error! ${err}`)
+		}
+
+		if (method === 'update') {
+			updateOperation(formData.id, {
+				amount: formData.amount,
+				date: formData.date,
+				detail: formData.detail,
+				type: formData.type,
+				recipient: formData.recipient,
 			})
-			.finally(() => {
-				setLoading(false)
-			})
+		}
+
+		showToast()
+		hideModal()
+		setLoading(false)
+		setFormData(defaultValues)
+		onSubmitted()
 	}
 
 	const deleteOperation = async () => {
 		if (confirm('Are you sure to delete this operation ?')) {
 			setLoading(true)
 
-			fetch('/api/operation', {
-				method: 'DELETE',
-				headers: {
-					'Content-Type': 'application/json',
-				},
-				body: JSON.stringify({
-					id: formData.id
-				})
-			})
-				.then(response => response.json())
-				.then(result => {
-					showToast()
-					hideModal()
-					setFormData(defaultValues)
-					onSubmitted(result)
-				})
-				.catch(err => {
-					alert(`Error! ${err}`)
-				})
-				.finally(() => {
-					setLoading(false)
-				})
+			destroyOperation(formData.id)
+
+			showToast()
+			hideModal()
+			setLoading(false)
+			setFormData(defaultValues)
+			onSubmitted()
 		}
 	}
 
@@ -140,8 +145,8 @@ const OperationFormComponent = ({
 							<label htmlFor="type" className="form-label">Type</label>
 							<input id="type" name="type" list="types" value={formData.type} className="form-control" required disabled={loading} onChange={updateField} autoComplete="off" />
 							<datalist id="types">
-								{types.map(t => (
-									<option key={t.id} value={t.name} />
+								{types.map((type, idx) => (
+									<option key={idx} value={type} />
 								))}
 							</datalist>
 						</div>
@@ -151,8 +156,8 @@ const OperationFormComponent = ({
 							<label htmlFor="recipient" className="form-label">Recipient</label>
 							<input id="recipient" name="recipient" list="recipients" value={formData.recipient} className="form-control" required disabled={loading} onChange={updateField} autoComplete="off" />
 							<datalist id="recipients">
-								{recipients.map(r => (
-									<option key={r.id} value={r.name} />
+								{recipients.map((recipient, idx) => (
+									<option key={idx} value={recipient} />
 								))}
 							</datalist>
 						</div>

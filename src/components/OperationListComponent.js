@@ -3,19 +3,14 @@ import OperationFormComponent from "@/components/OperationFormComponent";
 import {useRef} from "react";
 
 export default function OperationListComponent({
-	loading = false,
-	operations = [],
-	types = [],
-	recipients = [],
-	balance = 0,
+	data,
 	onUpdated,
 }) {
+	const { operations, credit, debit, balance } = data
 
 	const formComponent = useRef()
 
 	const editOperation = (operation) => {
-		console.log(formComponent)
-
 		formComponent.current?.setOperation(operation)
 
 		const { Modal } = require("bootstrap");
@@ -30,10 +25,8 @@ export default function OperationListComponent({
 					ref={formComponent}
 					modalId="editModal"
 					modalTitle="Edit operation"
-					endpoint="/api/operation"
-					method='PUT'
-					types={types}
-					recipients={recipients}
+					method='update'
+					data={data}
 					onSubmitted={onUpdated}
 				/>
 			}
@@ -45,49 +38,13 @@ export default function OperationListComponent({
 						<th width={1}>Type</th>
 						<th width={1}>Recipient</th>
 						<th>Detail</th>
-						<th width={1}>Amount</th>
+						<th width={1}>Debit</th>
+						<th width={1}>Credit</th>
 						<th width={1}></th>
 					</tr>
-					{!isEmpty(operations) &&
-						<tr>
-							<th>
-
-							</th>
-							<th>
-								<select className="form-select">
-									<option value=""></option>
-									{types.map(t => (
-										<option key={t.id} value={t.id}>{t.name}</option>
-									))}
-								</select>
-							</th>
-							<th>
-								<select className="form-select">
-									<option value=""></option>
-									{recipients.map(r => (
-										<option key={r.id} value={r.id}>{r.name}</option>
-									))}
-								</select>
-							</th>
-							<th>
-								<input type="search" className="form-control" placeholder="Search..."/>
-							</th>
-							<th>
-								<input type="search" className="form-control" placeholder="Search..."/>
-							</th>
-							<th></th>
-						</tr>
-					}
 				</thead>
 				<tbody className="table-group-divider">
-					{loading &&
-						<tr>
-							<td colSpan={10} className="text-center p-5 bg-light text-info">
-								<span className="spinner-border text-primary" />
-							</td>
-						</tr>
-					}
-					{!loading && isEmpty(operations) &&
+					{isEmpty(operations) &&
 						<tr>
 							<td colSpan={10} className="text-center p-5 bg-light text-info">
 								No operation
@@ -100,16 +57,25 @@ export default function OperationListComponent({
 								{formatDate(op.date)}
 							</td>
 							<td className="text-nowrap">
-								{op.type.name}
+								{op.type}
 							</td>
 							<td className="text-nowrap">
-								{op.recipient.name}
+								{op.recipient}
 							</td>
 							<td className="text-nowrap" dangerouslySetInnerHTML={{ __html: nl2br(op.detail) }} />
-							<td className="text-end">
-								<strong className={`text-${op.amount >= 0 ? 'success' : 'danger'}`}>
-									{currency(op.amount)}
-								</strong>
+							<td className="text-nowrap text-end">
+								{op.amount < 0 && (
+									<strong className="text-danger">
+										{currency(op.amount)}
+									</strong>
+								)}
+							</td>
+							<td className="text-nowrap text-end">
+								{op.amount >= 0 && (
+									<strong className="text-success">
+										{currency(op.amount)}
+									</strong>
+								)}
 							</td>
 							<td>
 								<button className="btn btn-link btn-sm text-decoration-none" onClick={() => editOperation(op)}>
@@ -123,11 +89,19 @@ export default function OperationListComponent({
 					<tfoot className="table-light">
 						<tr>
 							<td colSpan={4} className="text-end">
-								Balance :
-							</td>
-							<td className="text-end">
+								Balance : {' '}
 								<strong className={`text-${balance >= 0 ? 'success' : 'danger'}`}>
 									{currency(balance)}
+								</strong>
+							</td>
+							<td className="text-end text-nowrap">
+								<strong className="text-danger">
+									{currency(debit)}
+								</strong>
+							</td>
+							<td className="text-end text-nowrap">
+								<strong className="text-success">
+									{currency(credit)}
 								</strong>
 							</td>
 							<td></td>
