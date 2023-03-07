@@ -23,11 +23,15 @@ export default function OperationListComponent({
 		const dropdownList = [...dropdownElementList].map(dropdownToggleEl => new Dropdown(dropdownToggleEl))
 	}, [])
 
-	const editOperation = (operation) => {
-		formComponent.current?.setOperation(operation)
+	const showModalOperation = (operation = null) => {
+		let modalId = '#createModal'
+		if (operation) {
+			modalId = "#editModal"
+			formComponent.current?.setOperation(operation)
+		}
 
 		const { Modal } = require("bootstrap")
-		const myModal = new Modal("#editModal")
+		const myModal = new Modal(modalId)
 		myModal.show()
 	}
 
@@ -161,9 +165,17 @@ export default function OperationListComponent({
 								</span>
 								<br />
 								<br />
-								<button className="btn btn-outline-info btn-sm mb-3" onClick={importData}>
-									⬆️ Import your data
-								</button>
+
+								<div className="d-flex justify-content-center">
+									<button className="btn btn-outline-primary btn-sm mb-3 me-4" onClick={() => showModalOperation()}>
+										➕ Create first operation
+									</button>
+									- or -
+									<button className="btn btn-outline-info btn-sm mb-3 ms-4" onClick={importData}>
+										⬆️ Import your data
+									</button>
+								</div>
+
 							</td>
 						</tr>
 					}
@@ -194,7 +206,7 @@ export default function OperationListComponent({
 								)}
 							</td>
 							<td>
-								<button className="btn btn-link btn-sm text-decoration-none" onClick={() => editOperation(op)}>
+								<button className="btn btn-link btn-sm text-decoration-none" onClick={() => showModalOperation(op)}>
 									✏️
 								</button>
 							</td>
