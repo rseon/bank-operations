@@ -5,7 +5,7 @@ export default function Document() {
 		<Html lang="en" className="h-100">
 			<Head />
 			<body className="d-flex flex-column h-100">
-				<main class="flex-shrink-0">
+				<main className="flex-shrink-0">
 					<Main />
 				</main>
 				<footer className="footer mt-auto py-3 bg-light">

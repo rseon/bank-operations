@@ -1,6 +1,6 @@
-import {currency, DB_NAME, dbSave, formatDate, isEmpty, nl2br} from "@/helpers"
+import {currency, DB_NAME, dbSave, exportCSV, exportJson, formatDate, importCSV, importJson, isEmpty, nl2br} from "@/helpers"
 import OperationFormComponent from "@/components/OperationFormComponent"
-import {useRef} from "react"
+import {useEffect, useRef} from "react"
 
 /**
  * @todo Add filters
@@ -17,6 +17,12 @@ export default function OperationListComponent({
 
 	const formComponent = useRef()
 
+	useEffect(() => {
+		const { Dropdown } = require("bootstrap")
+		const dropdownElementList = document.querySelectorAll('.dropdown-toggle')
+		const dropdownList = [...dropdownElementList].map(dropdownToggleEl => new Dropdown(dropdownToggleEl))
+	}, [])
+
 	const editOperation = (operation) => {
 		formComponent.current?.setOperation(operation)
 
@@ -25,18 +31,19 @@ export default function OperationListComponent({
 		myModal.show()
 	}
 
-	const exportData = () => {
+	const exportData = (format) => {
 		/**
 		 * @todo Export with filters
 		 */
 
-		const jsonContent = 'data:application/json,' + JSON.stringify(operations)
-		const link = document.createElement("a")
-		link.setAttribute("href", encodeURI(jsonContent))
-		link.setAttribute("download", `bank_operations_${Date.now()}.json`)
-		document.body.appendChild(link)
-
-		link.click()
+		switch (format) {
+			case 'json':
+				exportJson(operations)
+				break
+			case 'csv':
+				exportCSV(operations)
+				break
+		}
 	}
 
 	const importData = () => {
@@ -58,8 +65,24 @@ export default function OperationListComponent({
 		const reader = new FileReader();
 		reader.onload = (e) => {
 			// @todo Accents has problems !
-			dbSave(DB_NAME, JSON.parse(e.target.result))
-			onUpdated()
+
+			let result
+			switch (file.type) {
+				case 'text/csv':
+					result = importCSV(e.target.result)
+					break
+				case 'application/json':
+					result = importJson(e.target.result)
+					break
+				default:
+					alert(`File type ${file.type} invalid`)
+					break
+			}
+
+			if (result) {
+				dbSave(DB_NAME, result)
+				onUpdated()
+			}
 		};
 		reader.readAsBinaryString(file);
 	}
@@ -78,15 +101,34 @@ export default function OperationListComponent({
 			}
 
 			<div className="text-end mb-3">
-				<input className="d-none" type="file" accept="applicatoin/json,.json" id="import" onChange={handleImport} />
-				<button className="btn btn-outline-info btn-sm mb-3" onClick={importData}>
+				<input className="d-none" type="file" accept="applicatoin/json,.json,text/csv,.csv" id="import" onChange={handleImport} />
+				<button className="btn btn-outline-info btn-sm" onClick={importData}>
 					⬆️ Import
 				</button>
 
 				{!isEmpty(operations) &&
-					<button className="btn btn-outline-info btn-sm mb-3 ms-2" onClick={exportData}>
-						⬇️ Export
-					</button>
+					<div className="btn-group ms-2">
+						<button type="button" className="btn btn-sm btn-outline-info dropdown-toggle" data-bs-toggle="dropdown">
+							⬇️ Export
+						</button>
+						<ul className="dropdown-menu dropdown-menu-end p-0">
+							<li>
+								<button className="dropdown-item" onClick={() => exportData('json')}>
+									JSON
+									<small className="text-muted"><br/>To be reimported in this app</small>
+								</button>
+							</li>
+							<li>
+								<hr className="dropdown-divider m-0" />
+							</li>
+							<li>
+								<button className="dropdown-item" onClick={() => exportData('csv')}>
+									CSV
+									<small className="text-muted"><br/>Human readable</small>
+								</button>
+							</li>
+						</ul>
+					</div>
 				}
 			</div>
 
