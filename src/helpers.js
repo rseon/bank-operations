@@ -25,26 +25,6 @@ export const nl2br = (str) => {
 	return (str + '').replace(/([^>\r\n]?)(\r\n|\n\r|\r|\n)/g, '$1<br />$2');
 }
 
-export const apiHandler = (handler) => {
-	return async (req, res) => {
-		const method = req.method.toLowerCase()
-		if (!handler[method]) {
-			return res.status(405).end(`Method ${req.method} Not Allowed`)
-		}
-		try {
-			await handler[method](req, res)
-		} catch (err) {
-			if (typeof (err) === 'string') {
-				return res.status(400).json({ message: err })
-			}
-			if (err.status) {
-				return res.status(err.status).json({ message: err.message })
-			}
-			return res.status(500).json({ message: err.message })
-		}
-	}
-}
-
 export const getOperationData = () => {
 	let operations = dbGet(DB_NAME)
 		.sort((a, b) => new Date(b.date) - new Date(a.date))
