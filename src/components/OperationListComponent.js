@@ -1,6 +1,6 @@
-import {currency, formatDate, isEmpty, nl2br} from "@/helpers";
-import OperationFormComponent from "@/components/OperationFormComponent";
-import {useRef} from "react";
+import {currency, formatDate, isEmpty, nl2br} from "@/helpers"
+import OperationFormComponent from "@/components/OperationFormComponent"
+import {useRef} from "react"
 
 export default function OperationListComponent({
 	data,
@@ -18,6 +18,42 @@ export default function OperationListComponent({
 		myModal.show()
 	}
 
+	const exportData = () => {
+
+		const rows = [
+			{
+				date: "Date",
+				type: "Type",
+				recipient: "Recipient",
+				detail: "Detail",
+				amount: "Amount",
+			},
+			...operations.map(op => {
+				return {
+					date: op.date,
+					type: op.type,
+					recipient: op.recipient,
+					detail: op.detail,
+					amount: op.amount,
+				}
+			})
+		]
+
+		const csvContent = 'data:text/csv;charset=utf-8,\ufeff' + rows.map(row => {
+			return Object.values(row)
+				.map(op => `"${op}"`)
+				.join(';')
+		}).join("\n")
+
+
+		const link = document.createElement("a")
+		link.setAttribute("href", encodeURI(csvContent))
+		link.setAttribute("download", `bank_operations_${Date.now()}`)
+		document.body.appendChild(link)
+
+		link.click()
+	}
+
 	return (
 		<>
 			{!isEmpty(operations) &&
@@ -29,6 +65,14 @@ export default function OperationListComponent({
 					data={data}
 					onSubmitted={onUpdated}
 				/>
+			}
+
+			{!isEmpty(operations) &&
+				<div className="text-end">
+					<button className="btn btn-outline-info btn-sm mb-3" onClick={exportData}>
+						⬇️ Export
+					</button>
+				</div>
 			}
 
 			<table className="table table-striped table-hover">
