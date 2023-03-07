@@ -13,8 +13,8 @@ export default function OperationListComponent({
 	const editOperation = (operation) => {
 		formComponent.current?.setOperation(operation)
 
-		const { Modal } = require("bootstrap");
-		const myModal = new Modal("#editModal");
+		const { Modal } = require("bootstrap")
+		const myModal = new Modal("#editModal")
 		myModal.show()
 	}
 
@@ -39,10 +39,10 @@ export default function OperationListComponent({
 			})
 		]
 
-		const csvContent = 'data:text/csv;charset=utf-8,\ufeff' + rows.map(row => {
+		const csvContent = 'data:text/csvcharset=utf-8,\ufeff' + rows.map(row => {
 			return Object.values(row)
 				.map(op => `"${op}"`)
-				.join(';')
+				.join('')
 		}).join("\n")
 
 

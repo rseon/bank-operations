@@ -1,10 +1,10 @@
 export default function HeaderComponent() {
 
 	const showModal = () => {
-		const { Modal } = require("bootstrap");
-		const myModal = new Modal("#createModal");
-		myModal.show();
-	};
+		const { Modal } = require("bootstrap")
+		const myModal = new Modal("#createModal")
+		myModal.show()
+	}
 
 	return (
 		<>

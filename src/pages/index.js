@@ -1,9 +1,9 @@
-import HeaderComponent from "@/components/HeaderComponent";
-import OperationFormComponent from "@/components/OperationFormComponent";
-import ToastComponent from "@/components/ToastComponent";
-import OperationListComponent from "@/components/OperationListComponent";
-import {useEffect, useState} from "react";
-import {getOperationData} from "@/helpers";
+import HeaderComponent from "@/components/HeaderComponent"
+import OperationFormComponent from "@/components/OperationFormComponent"
+import ToastComponent from "@/components/ToastComponent"
+import OperationListComponent from "@/components/OperationListComponent"
+import {useEffect, useState} from "react"
+import {getOperationData} from "@/helpers"
 
 export default function Home() {
 	const [data, setData] = useState({

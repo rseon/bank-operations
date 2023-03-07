@@ -1,6 +1,6 @@
-import ModalComponent from "@/components/ModalComponent";
-import {forwardRef, useImperativeHandle, useState} from "react";
-import {createOperation, destroyOperation, formatDate, trigger, updateOperation} from "@/helpers";
+import ModalComponent from "@/components/ModalComponent"
+import {forwardRef, useImperativeHandle, useState} from "react"
+import {createOperation, destroyOperation, formatDate, trigger, updateOperation} from "@/helpers"
 
 const OperationFormComponent = ({
 	modalId,
@@ -37,7 +37,7 @@ const OperationFormComponent = ({
 
 	useImperativeHandle(ref, () => ({
 		setOperation
-	}));
+	}))
 
 	const updateField = (e) => {
 		const { name, value } = e.target
@@ -49,10 +49,10 @@ const OperationFormComponent = ({
 	}
 
 	const showToast = () => {
-		const { Toast } = require("bootstrap");
-		const myToast = new Toast("#liveToast");
+		const { Toast } = require("bootstrap")
+		const myToast = new Toast("#liveToast")
 		myToast.show()
-	};
+	}
 
 	const hideModal = () => {
 		trigger('click', document.getElementById(modalId).querySelector('.btn-close'))
