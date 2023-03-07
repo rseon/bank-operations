@@ -1,6 +1,6 @@
 import { parseJSON, format } from 'date-fns'
 
-const DB_NAME = 'operations'
+export const DB_NAME = 'operations'
 
 export const formatDate = (date, formatDate = 'dd/MM/yyyy') => {
 	if (!date) return null
@@ -13,10 +13,6 @@ export const currency = (amount) => {
 }
 
 export const isEmpty = (array) => array.length === 0
-
-export const trigger = (event, element) => {
-	element.dispatchEvent(new MouseEvent(event))
-}
 
 export const nl2br = (str) => {
 	if (typeof str === 'undefined' || str === null) {

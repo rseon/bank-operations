@@ -1,6 +1,6 @@
 import ModalComponent from "@/components/ModalComponent"
 import {forwardRef, useImperativeHandle, useState} from "react"
-import {createOperation, destroyOperation, formatDate, trigger, updateOperation} from "@/helpers"
+import {createOperation, destroyOperation, formatDate, updateOperation} from "@/helpers"
 
 const OperationFormComponent = ({
 	modalId,
@@ -55,7 +55,7 @@ const OperationFormComponent = ({
 	}
 
 	const hideModal = () => {
-		trigger('click', document.getElementById(modalId).querySelector('.btn-close'))
+		document.getElementById(modalId).querySelector('.btn-close').click()
 	}
 
 	const handleSubmit = async (event) => {

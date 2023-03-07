@@ -33,5 +33,4 @@ yarn-error.log*
 
 bak*
 .env
-prisma/dev.db*
 .idea
