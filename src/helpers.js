@@ -140,14 +140,6 @@ export const importCSV = (content) => {
 
 			const amount = credit !== '' ? credit : debit
 
-			console.log({
-				date,
-				type,
-				recipient,
-				detail,
-				amount,
-			})
-
 			return {
 				id: `${idxPrefix}${idx}`,
 				date,
