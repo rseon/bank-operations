@@ -69,6 +69,7 @@ export default function OperationListComponent({
 			let result
 			switch (file.type) {
 				case 'text/csv':
+				case 'application/vnd.ms-excel':
 					result = importCSV(e.target.result)
 					break
 				case 'application/json':
