@@ -131,15 +131,15 @@ const TableComponent = ({
 					}
 					<th width={1}>
 						Date
-						<SortByComponent sortBy={sortBy} setSortBy={setSortBy} field="date" />
+						{nbFiltered > 0 && <SortByComponent sortBy={sortBy} setSortBy={setSortBy} field="date" />}
 					</th>
 					<th width={1}>
 						Type
-						<SortByComponent sortBy={sortBy} setSortBy={setSortBy} field="type" />
+						{nbFiltered > 0 && <SortByComponent sortBy={sortBy} setSortBy={setSortBy} field="type" />}
 					</th>
 					<th width={1}>
 						Recipient
-						<SortByComponent sortBy={sortBy} setSortBy={setSortBy} field="recipient" />
+						{nbFiltered > 0 && <SortByComponent sortBy={sortBy} setSortBy={setSortBy} field="recipient" />}
 					</th>
 					<th>Detail</th>
 					<th width={1}>Debit</th>
