@@ -32,6 +32,13 @@ export const setOperationsData = (operations) => {
 	return dbSave(DB_NAME, operations)
 }
 
+export const removeOperations = (to_remove) => {
+	const operations = dbGet(DB_NAME)
+		.filter(op => !to_remove.includes(op.id))
+
+	setOperationsData(operations)
+}
+
 export const getCreditTotal = (operations) => {
 	const credit = operations.reduce((acc, op) => {
 		const amount = parseFloat(op.amount)

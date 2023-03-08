@@ -1,4 +1,4 @@
-import {isEmpty} from "@/helpers"
+import {CHECKBOX_STATES, isEmpty} from "@/helpers"
 import {filterOperations, getFiltersData} from "@/helpers/filter"
 import FormComponent from "@/components/Operation/FormComponent"
 import {useEffect, useRef, useState} from "react"
@@ -11,11 +11,13 @@ export default function ListComponent({
 }) {
 	const formComponent = useRef()
 	const toolbarComponent = useRef()
+	const tableComponent = useRef()
 	const { operations } = data
 
 	// Filters
 	const [filtered, setFiltered] = useState([])
 	const [filters, setFilters] = useState({})
+
 	useEffect(() => {
 		setFilters(getFiltersData())
 	}, [])
@@ -23,6 +25,13 @@ export default function ListComponent({
 	useEffect(() => {
 		setFiltered(filterOperations(operations, filters))
 	}, [operations, filters])
+
+	const onUpdatedLocal = () => {
+		tableComponent.current?.setCheckboxChecked(CHECKBOX_STATES.empty)
+		tableComponent.current?.setListChecked([])
+		toolbarComponent.current?.setForBulk([])
+		onUpdated()
+	}
 
 	return (
 		<>
@@ -33,7 +42,7 @@ export default function ListComponent({
 					modalTitle="Edit operation"
 					method='update'
 					data={data}
-					onSubmitted={onUpdated}
+					onSubmitted={onUpdatedLocal}
 				/>
 			}
 
@@ -43,10 +52,11 @@ export default function ListComponent({
 				filtered={filtered}
 				filters={filters}
 				setFilters={setFilters}
-				onUpdated={onUpdated}
+				onUpdated={onUpdatedLocal}
 			/>
 
 			<TableComponent
+				ref={tableComponent}
 				data={data}
 				filtered={filtered}
 				formComponent={formComponent}

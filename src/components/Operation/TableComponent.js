@@ -1,19 +1,28 @@
-import {currency, formatDate, isEmpty, nl2br} from "@/helpers"
+import {CHECKBOX_STATES, currency, formatDate, isEmpty, nl2br} from "@/helpers"
 import {getBalanceTotal, getCreditTotal, getDebitTotal} from "@/helpers/operation"
-import {useEffect, useState} from "react";
+import {forwardRef, useEffect, useImperativeHandle, useRef, useState} from "react";
 
-export default function TableComponent({
+const TableComponent = ({
 	data,
 	filtered,
 	formComponent,
 	toolbarComponent,
-}) {
+}, ref) => {
 	const { operations } = data
 	const [totals, setTotals] = useState({
 		credit: 0,
 		debit: 0,
 		balance: 0,
 	})
+	const checkboxAll = useRef()
+	const [isAllChecked, setIsAllChecked] = useState(CHECKBOX_STATES.empty)
+	const [listChecked, setListChecked] = useState([])
+	const [nbFiltered, setNbFiltered] = useState(0)
+
+	useImperativeHandle(ref, () => ({
+		setCheckboxChecked,
+		setListChecked
+	}))
 
 	useEffect(() => {
 		setTotals({
@@ -21,6 +30,7 @@ export default function TableComponent({
 			debit: getDebitTotal(filtered),
 			balance: getBalanceTotal(filtered),
 		})
+		setNbFiltered(filtered.length)
 	}, [filtered])
 
 	const showModalOperation = (operation = null) => {
@@ -39,10 +49,83 @@ export default function TableComponent({
 		toolbarComponent.current?.importData()
 	}
 
+	const setCheckboxChecked = (type) => {
+		setIsAllChecked(type)
+		const checkbox = checkboxAll.current
+		if (!checkbox) {
+			return
+		}
+		switch (type) {
+			case CHECKBOX_STATES.empty:
+				checkbox.checked = false
+				checkbox.indeterminate = false
+				break
+			case CHECKBOX_STATES.checked:
+				checkbox.checked = true
+				checkbox.indeterminate = false
+				break
+			case CHECKBOX_STATES.indeterminate:
+				checkbox.checked = false
+				checkbox.indeterminate = true
+				break
+		}
+	}
+
+	const handleCheckbox = (event) => {
+		const value = event.target.value
+		const checked = event.target.checked
+
+		let list = []
+		if (value === '*') {
+			checkboxAll.current.indeterminate = false
+			checkboxAll.current.checked = checked
+			if (checked) {
+				setIsAllChecked(CHECKBOX_STATES.checked)
+				list = filtered.map(f => f.id)
+			}
+			else {
+				setIsAllChecked(CHECKBOX_STATES.empty)
+				list = []
+			}
+		}
+		else {
+			list = [...listChecked, value]
+			if (!checked) {
+				list = list.filter(id => id !== value)
+			}
+
+			switch (list.length) {
+				case 0:
+					setIsAllChecked(CHECKBOX_STATES.empty)
+					checkboxAll.current.checked = false
+					checkboxAll.current.indeterminate = false
+					break
+				case filtered.length:
+					setIsAllChecked(CHECKBOX_STATES.checked)
+					checkboxAll.current.checked = true
+					checkboxAll.current.indeterminate = false
+					break
+				default:
+					setIsAllChecked(CHECKBOX_STATES.indeterminate)
+					checkboxAll.current.checked = false
+					checkboxAll.current.indeterminate = true
+					break
+			}
+		}
+
+		setListChecked(list)
+		toolbarComponent.current?.setForBulk(list)
+	}
+
 	return (
 		<table className="table table-striped table-hover">
 			<thead className="table-light">
 				<tr>
+					{nbFiltered > 1 &&
+						<th width={1}>
+							<input ref={checkboxAll} value="*" type="checkbox" className="form-check-input" onChange={handleCheckbox} />
+						</th>
+					}
 					<th width={1}>Date</th>
 					<th width={1}>Type</th>
 					<th width={1}>Recipient</th>
@@ -91,6 +174,11 @@ export default function TableComponent({
 				}
 				{filtered.map((op, idx) => (
 					<tr key={idx}>
+						{nbFiltered > 1 &&
+							<th width={1}>
+								<input type="checkbox" value={op.id} className="form-check-input" checked={listChecked.includes(op.id)} onChange={handleCheckbox} />
+							</th>
+						}
 						<td className="text-nowrap">
 							{formatDate(op.date)}
 						</td>
@@ -126,7 +214,7 @@ export default function TableComponent({
 			{!isEmpty(filtered) &&
 				<tfoot className="table-light">
 					<tr>
-						<td colSpan={4} className="text-end">
+						<td colSpan={nbFiltered > 1 ? 5 : 4} className="text-end">
 							Balance : {' '}
 							<strong className={`text-${totals.balance >= 0 ? 'success' : 'danger'}`}>
 								{currency(totals.balance)}
@@ -149,3 +237,5 @@ export default function TableComponent({
 		</table>
 	)
 }
+
+export default forwardRef(TableComponent)

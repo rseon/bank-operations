@@ -1,6 +1,10 @@
 import {parseJSON, format} from 'date-fns'
 
-
+export const CHECKBOX_STATES = {
+	checked: 'Checked',
+	indeterminate: 'Indeterminate',
+	empty: 'Empty',
+}
 
 export const downloadFile = (content, filename) => {
 	const link = document.createElement("a")

@@ -1,7 +1,7 @@
 import {isEmpty} from "@/helpers";
 import {forwardRef, useEffect, useImperativeHandle, useState} from "react";
 import FilterComponent from "@/components/Operation/FilterComponent";
-import {setOperationsData, exportCSV, exportJson, importCSV, importJson} from "@/helpers/operation";
+import {setOperationsData, exportCSV, exportJson, importCSV, importJson, removeOperations} from "@/helpers/operation";
 
 const OperationListToolbarComponent = ({
 	data,
@@ -14,6 +14,7 @@ const OperationListToolbarComponent = ({
 	const { operations } = data
 	const [nbFilters, setNbFilters] = useState(0)
 	const [showFilters, setShowFilters] = useState(false)
+	const [forBulk, setForBulk] = useState([])
 
 	useEffect(() => {
 		setNbFilters(Object.values(filters).filter(f => f !== '').length)
@@ -32,7 +33,8 @@ const OperationListToolbarComponent = ({
 	}
 
 	useImperativeHandle(ref, () => ({
-		importData
+		importData,
+		setForBulk
 	}))
 
 	const handleImport = (e) => {
@@ -82,9 +84,9 @@ const OperationListToolbarComponent = ({
 		}
 	}
 
-	const clearData = () => {
-		if (confirm('This will erase all your data. Continue ?')) {
-			setOperationsData([])
+	const deleteSelected = () => {
+		if (confirm('This will erase selected data. Continue ?')) {
+			removeOperations(forBulk)
 			onUpdated()
 		}
 	}
@@ -102,6 +104,22 @@ const OperationListToolbarComponent = ({
 					}
 				</div>
 				<div className="text-end mb-3">
+					{!isEmpty(forBulk) &&
+						<div className="btn-group me-2">
+							<button type="button" className="btn btn-sm btn-outline-warning dropdown-toggle" data-bs-toggle="dropdown">
+								🗑️ Delete selected ({forBulk.length})
+							</button>
+							<ul className="dropdown-menu dropdown-menu-end p-0">
+								<li>
+									<button className="dropdown-item" onClick={deleteSelected}>
+										Confirm deletion
+										<small className="text-muted"><br/>⚠️ No turning back !</small>
+									</button>
+								</li>
+							</ul>
+						</div>
+					}
+
 					<input className="d-none" type="file" accept="application/json,.json,text/csv,.csv" id="import" onChange={handleImport} />
 					<button className="btn btn-outline-info btn-sm" onClick={importData}>
 						⬆️ Import
@@ -127,19 +145,6 @@ const OperationListToolbarComponent = ({
 										<button className="dropdown-item" onClick={() => exportData('csv')}>
 											CSV
 											<small className="text-muted"><br/>Human readable</small>
-										</button>
-									</li>
-								</ul>
-							</div>
-							<div className="btn-group ms-2">
-								<button type="button" className="btn btn-sm btn-outline-info dropdown-toggle" data-bs-toggle="dropdown">
-									🗑️ Clear all
-								</button>
-								<ul className="dropdown-menu dropdown-menu-end p-0">
-									<li>
-										<button className="dropdown-item" onClick={clearData}>
-											Confirm deletion
-											<small className="text-muted"><br/>⚠️ No turning back !</small>
 										</button>
 									</li>
 								</ul>
