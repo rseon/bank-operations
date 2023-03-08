@@ -1,9 +1,8 @@
 import HeaderComponent from "@/components/HeaderComponent"
-import OperationFormComponent from "@/components/OperationFormComponent"
-import ToastComponent from "@/components/ToastComponent"
-import OperationListComponent from "@/components/OperationListComponent"
+import FormComponent from "@/components/Operation/FormComponent"
+import ListComponent from "@/components/Operation/ListComponent"
 import {useEffect, useState} from "react"
-import {getOperationData} from "@/helpers"
+import {getOperationData} from "@/helpers/operation";
 
 export default function Home() {
 	const [data, setData] = useState({
@@ -14,7 +13,7 @@ export default function Home() {
 	})
 
 	const loadList = () => {
-		setData(getOperationData())
+		setData(getOperationData)
 	}
 
 	useEffect(() => {
@@ -24,17 +23,16 @@ export default function Home() {
 	return (
 		<>
 			<HeaderComponent />
-			<OperationFormComponent
+			<FormComponent
 				modalId="createModal"
 				modalTitle="New operation"
 				method="create"
 				data={data}
 				onSubmitted={loadList}
 			/>
-			<ToastComponent id="liveToast" title="Bravo!" body="Operation saved successfully!" />
 
 			<div className="container">
-				<OperationListComponent
+				<ListComponent
 					data={data}
 					onUpdated={loadList}
 				/>

@@ -1,4 +1,5 @@
 import { Html, Head, Main, NextScript } from 'next/document'
+import ToastComponent from "@/components/ToastComponent";
 
 export default function Document() {
 	return (
@@ -6,6 +7,8 @@ export default function Document() {
 			<Head />
 			<body className="d-flex flex-column h-100">
 				<main className="flex-shrink-0">
+					<ToastComponent id="liveToast" title="Bravo!" body="Operation saved successfully!" />
+
 					<Main />
 				</main>
 				<footer className="footer mt-auto py-3 bg-light">

@@ -1,8 +1,9 @@
 import ModalComponent from "@/components/ModalComponent"
 import {forwardRef, useImperativeHandle, useState} from "react"
-import {createOperation, destroyOperation, formatDate, updateOperation} from "@/helpers"
+import {formatDate} from "@/helpers"
+import {createOperation, destroyOperation, updateOperation} from "@/helpers/operation"
 
-const OperationFormComponent = ({
+const FormComponent = ({
 	modalId,
 	modalTitle,
 	method,
@@ -185,4 +186,4 @@ const OperationFormComponent = ({
 	)
 }
 
-export default forwardRef(OperationFormComponent)
+export default forwardRef(FormComponent)
