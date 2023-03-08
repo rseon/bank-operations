@@ -96,11 +96,26 @@ const OperationListToolbarComponent = ({
 			<div className="d-flex justify-content-between">
 				<div>
 					{!isEmpty(operations) &&
-						<button className="btn btn-outline-info btn-sm" onClick={() => setShowFilters(!showFilters)}>
-							{showFilters && '🛠️ Hide filters'}
-							{!showFilters && '🛠️ Show filters'}
-							{nbFilters > 0 && ` (${nbFilters})`}
-						</button>
+						<>
+							<button className="btn btn-outline-info btn-sm" onClick={() => setShowFilters(!showFilters)}>
+								{showFilters && '🛠️ Hide filters'}
+								{!showFilters && '🛠️ Show filters'}
+								{nbFilters > 0 && ` (${nbFilters})`}
+							</button>
+
+							<span className="text-muted ms-3">
+								{filtered.length !== operations.length && (
+									<>
+										<strong>{filtered.length}</strong> operations / {operations.length}
+									</>
+								)}
+								{filtered.length === operations.length && (
+									<>
+										<strong>{operations.length}</strong> operations
+									</>
+								)}
+							</span>
+						</>
 					}
 				</div>
 				<div className="text-end mb-3">
@@ -153,7 +168,7 @@ const OperationListToolbarComponent = ({
 					}
 				</div>
 			</div>
-			{showFilters && (
+			{!isEmpty(operations) && showFilters && (
 				<FilterComponent
 					data={data}
 					filters={filters}
