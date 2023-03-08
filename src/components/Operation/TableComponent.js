@@ -1,12 +1,15 @@
 import {CHECKBOX_STATES, currency, formatDate, isEmpty, nl2br} from "@/helpers"
 import {getBalanceTotal, getCreditTotal, getDebitTotal} from "@/helpers/operation"
 import {forwardRef, useEffect, useImperativeHandle, useRef, useState} from "react";
+import SortByComponent from "@/components/Operation/SortByComponent";
 
 const TableComponent = ({
 	data,
 	filtered,
 	formComponent,
 	toolbarComponent,
+	sortBy,
+	setSortBy,
 }, ref) => {
 	const { operations } = data
 	const [totals, setTotals] = useState({
@@ -126,9 +129,18 @@ const TableComponent = ({
 							<input ref={checkboxAll} value="*" type="checkbox" className="form-check-input" onChange={handleCheckbox} />
 						</th>
 					}
-					<th width={1}>Date</th>
-					<th width={1}>Type</th>
-					<th width={1}>Recipient</th>
+					<th width={1}>
+						Date
+						<SortByComponent sortBy={sortBy} setSortBy={setSortBy} field="date" />
+					</th>
+					<th width={1}>
+						Type
+						<SortByComponent sortBy={sortBy} setSortBy={setSortBy} field="type" />
+					</th>
+					<th width={1}>
+						Recipient
+						<SortByComponent sortBy={sortBy} setSortBy={setSortBy} field="recipient" />
+					</th>
 					<th>Detail</th>
 					<th width={1}>Debit</th>
 					<th width={1}>Credit</th>

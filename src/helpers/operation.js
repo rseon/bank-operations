@@ -5,8 +5,6 @@ export const DB_NAME = 'operations'
 
 export const getOperationData = () => {
 	let operations = dbGet(DB_NAME)
-		.sort((a, b) => new Date(b.date) - new Date(a.date))
-
 	let types = []
 	let recipients = []
 	operations.forEach(op => {

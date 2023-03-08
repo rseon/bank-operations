@@ -3,7 +3,7 @@
 ## Features
 - [x] Filter
   - [x] Default current year and month
-- [ ] Sort
+- [x] Sort
 - [x] Export to JSON
 - [x] Export to CSV
 - [x] Export with filters

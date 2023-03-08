@@ -2,6 +2,7 @@ import {dbGet, dbSave, formatDate} from "@/helpers/index";
 import {lastDayOfMonth} from "date-fns";
 
 export const DB_FILTERS = 'filters'
+export const DB_SORT_BY = 'sortby'
 
 
 export const getFiltersData = () => {
@@ -18,7 +19,9 @@ export const setFiltersData = (filters) => {
 	return dbSave(DB_FILTERS, filters)
 }
 
-export const filterOperations = (operations, filters = {}) => {
+export const filterOperations = (operations, filters = {}, sortBy = {}) => {
+	const { field, direction } = sortBy
+
 	return operations.filter(op => {
 		if (filters.from && filters.to) {
 			if (op.date > filters.to || op.date < filters.from) {
@@ -41,5 +44,22 @@ export const filterOperations = (operations, filters = {}) => {
 			return false
 		}
 		return true
+	}).sort((a, b) => {
+		switch (field) {
+			case 'date':
+				return direction === 'asc' ? new Date(a.date) - new Date(b.date) : new Date(b.date) - new Date(a.date)
+			default:
+				return direction === 'asc' ? a[field].localeCompare(b[field]) : b[field].localeCompare(a[field])
+		}
 	})
+}
+
+export const getSortByData = () => {
+	return dbGet(DB_SORT_BY, {
+		field: 'date',
+		direction: 'desc',
+	})
+}
+export const setSortByData = (sortBy) => {
+	return dbSave(DB_SORT_BY, sortBy)
 }

@@ -1,5 +1,5 @@
 import {CHECKBOX_STATES, isEmpty} from "@/helpers"
-import {filterOperations, getFiltersData} from "@/helpers/filter"
+import {filterOperations, getFiltersData, getSortByData, setSortByData} from "@/helpers/filter"
 import FormComponent from "@/components/Operation/FormComponent"
 import {useEffect, useRef, useState} from "react"
 import ToolbarComponent from "@/components/Operation/ToolbarComponent";
@@ -17,20 +17,27 @@ export default function ListComponent({
 	// Filters
 	const [filtered, setFiltered] = useState([])
 	const [filters, setFilters] = useState({})
+	const [sortBy, setSortBy] = useState()
 
 	useEffect(() => {
-		setFilters(getFiltersData())
+		setFilters(getFiltersData)
+		setSortBy(getSortByData)
 	}, [])
 
 	useEffect(() => {
-		setFiltered(filterOperations(operations, filters))
-	}, [operations, filters])
+		setFiltered(filterOperations(operations, filters, sortBy))
+	}, [operations, filters, sortBy])
 
 	const onUpdatedLocal = () => {
 		tableComponent.current?.setCheckboxChecked(CHECKBOX_STATES.empty)
 		tableComponent.current?.setListChecked([])
 		toolbarComponent.current?.setForBulk([])
 		onUpdated()
+	}
+
+	const saveSortBy = (newSortBy) => {
+		setSortBy(newSortBy)
+		setSortByData(newSortBy)
 	}
 
 	return (
@@ -61,6 +68,8 @@ export default function ListComponent({
 				filtered={filtered}
 				formComponent={formComponent}
 				toolbarComponent={toolbarComponent}
+				sortBy={sortBy}
+				setSortBy={saveSortBy}
 			/>
 		</>
 	)

@@ -22,7 +22,16 @@ export const formatDate = (date, formatDate = 'dd/MM/yyyy') => {
 }
 
 export const currency = (amount) => {
-	return `${amount.toString().replace('.', ',')} €`
+	let formatted = amount.toString()
+		.replace('.', ',')
+		.replace(',00', '')
+
+	if (formatted.includes(',')) {
+		const [unit, decimals] = formatted.split(',')
+		formatted = `${unit},${decimals.padEnd(2, '0')}`
+	}
+
+	return `${formatted} €`
 }
 
 export const isEmpty = (array) => array.length === 0
