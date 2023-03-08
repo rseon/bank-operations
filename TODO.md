@@ -1,17 +1,16 @@
 # TODO
 
 ## Features
-- [ ] Filter
-  - [ ] Default current year and month
+- [x] Filter
+  - [x] Default current year and month
 - [ ] Sort
-- [ ] Pagination
 - [x] Export to JSON
 - [x] Export to CSV
-- [ ] Export with filters
+- [x] Export with filters
 - [x] Import from JSON
 - [x] Import from CSV
 - [ ] 🐛 Fix accents in imports
-- [ ] Bulk delete
+- [x] Bulk delete
 - [ ] Graphs
 
 ## UI
