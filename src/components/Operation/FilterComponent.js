@@ -2,7 +2,7 @@ import {lastDayOfMonth} from "date-fns";
 import {formatDate} from "@/helpers";
 import {setFiltersData} from "@/helpers/filter";
 
-const OperationListToolbarComponent = ({
+const OperationFilterComponent = ({
 	data,
 	filters,
 	setFilters
@@ -56,6 +56,11 @@ const OperationListToolbarComponent = ({
 								<option key={idx} value={type}>{type}</option>
 							))}
 						</select>
+						{filters.type !== '' &&
+							<button className="btn btn-link p-0" onClick={() => updateFilter('type', '')}>
+								<small>Reset filter</small>
+							</button>
+						}
 					</div>
 					<div className="col">
 						<label htmlFor="filter_type" className="form-label">Recipient</label>
@@ -65,10 +70,20 @@ const OperationListToolbarComponent = ({
 								<option key={idx} value={recipient}>{recipient}</option>
 							))}
 						</select>
+						{filters.recipient !== '' &&
+							<button className="btn btn-link p-0" onClick={() => updateFilter('recipient', '')}>
+								<small>Reset filter</small>
+							</button>
+						}
 					</div>
 					<div className="col">
 						<label htmlFor="filter_detail" className="form-label">Detail</label>
 						<input id="filter_detail" name="detail" type="search" className="form-control" value={filters.detail} onChange={onChange} autoComplete="off" />
+						{filters.detail !== '' &&
+							<button className="btn btn-link p-0" onClick={() => updateFilter('detail', '')}>
+								<small>Reset filter</small>
+							</button>
+						}
 					</div>
 				</div>
 			</div>
@@ -76,4 +91,4 @@ const OperationListToolbarComponent = ({
 	)
 }
 
-export default OperationListToolbarComponent
+export default OperationFilterComponent
