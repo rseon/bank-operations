@@ -3,7 +3,7 @@ import {forwardRef, useEffect, useImperativeHandle, useState} from "react";
 import FilterComponent from "@/components/Operation/FilterComponent";
 import {setOperationsData, exportCSV, exportJson, importCSV, importJson, removeOperations} from "@/helpers/operation";
 
-const OperationListToolbarComponent = ({
+const OperationToolbarComponent = ({
 	data,
 	filtered,
 	filters,
@@ -179,4 +179,4 @@ const OperationListToolbarComponent = ({
 	)
 }
 
-export default forwardRef(OperationListToolbarComponent)
+export default forwardRef(OperationToolbarComponent)

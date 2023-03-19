@@ -3,7 +3,7 @@ import {getBalanceTotal, getCreditTotal, getDebitTotal} from "@/helpers/operatio
 import {forwardRef, useEffect, useImperativeHandle, useRef, useState} from "react";
 import SortByComponent from "@/components/Operation/SortByComponent";
 
-const TableComponent = ({
+const OperationTableComponent = ({
 	data,
 	filtered,
 	formComponent,
@@ -250,4 +250,4 @@ const TableComponent = ({
 	)
 }
 
-export default forwardRef(TableComponent)
+export default forwardRef(OperationTableComponent)

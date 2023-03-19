@@ -44,7 +44,7 @@ export const nl2br = (str) => {
 }
 
 
-export const dbGet = (item, defaultValue = []) => {
+export const dbGet = (item, defaultValue = null) => {
 	return JSON.parse(localStorage.getItem(item) || JSON.stringify(defaultValue))
 }
 
