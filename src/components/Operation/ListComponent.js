@@ -5,7 +5,7 @@ import {useEffect, useRef, useState} from "react"
 import ToolbarComponent from "@/components/Operation/ToolbarComponent";
 import TableComponent from "@/components/Operation/TableComponent";
 
-export default function ListComponent({
+export default function OperationListComponent({
 	data,
 	onUpdated,
 }) {
