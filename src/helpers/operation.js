@@ -116,7 +116,7 @@ export const importCSV = (content) => {
 				date,
 				type,
 				recipient,
-				detail,
+				detail: detail.replace('[_n]', "\n"),
 				amount,
 			}
 		})
@@ -146,7 +146,7 @@ export const exportCSV = (operations) => {
 				date: op.date,
 				type: op.type,
 				recipient: op.recipient,
-				detail: op.detail,
+				detail: op.detail.replace("\n", "[_n]"),
 				debit,
 				credit,
 			}
