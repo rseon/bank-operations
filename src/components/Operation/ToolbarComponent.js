@@ -49,8 +49,6 @@ const OperationToolbarComponent = ({
 
 		const reader = new FileReader();
 		reader.onload = (e) => {
-			// @todo Accents has problems !
-
 			let result
 			switch (file.type) {
 				case 'text/csv':
