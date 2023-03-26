@@ -3,7 +3,7 @@ import {forwardRef, useEffect, useImperativeHandle, useState} from "react";
 import FilterComponent from "@/components/Operation/FilterComponent";
 import {setOperationsData, exportCSV, exportJson, importCSV, importJson, removeOperations} from "@/helpers/operation";
 
-const OperationListToolbarComponent = ({
+const OperationToolbarComponent = ({
 	data,
 	filtered,
 	filters,
@@ -144,7 +144,7 @@ const OperationListToolbarComponent = ({
 						<>
 							<div className="btn-group ms-2">
 								<button type="button" className="btn btn-sm btn-outline-info dropdown-toggle" data-bs-toggle="dropdown">
-									⬇️ Export
+									⬇️ Export this list
 								</button>
 								<ul className="dropdown-menu dropdown-menu-end p-0">
 									<li>
@@ -179,4 +179,4 @@ const OperationListToolbarComponent = ({
 	)
 }
 
-export default forwardRef(OperationListToolbarComponent)
+export default forwardRef(OperationToolbarComponent)

@@ -1,4 +1,4 @@
-export default function SortByComponent({ sortBy, setSortBy, field }) {
+export default function OperationSortByComponent({ sortBy, setSortBy, field }) {
 	const toggleSort = () => {
 
 		let direction = sortBy.direction

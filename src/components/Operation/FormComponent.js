@@ -3,7 +3,7 @@ import {forwardRef, useImperativeHandle, useState} from "react"
 import {formatDate} from "@/helpers"
 import {createOperation, destroyOperation, updateOperation} from "@/helpers/operation"
 
-const FormComponent = ({
+const OperationFormComponent = ({
 	modalId,
 	modalTitle,
 	method,
@@ -186,4 +186,4 @@ const FormComponent = ({
 	)
 }
 
-export default forwardRef(FormComponent)
+export default forwardRef(OperationFormComponent)

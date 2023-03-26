@@ -1,10 +1,11 @@
-import {dbGet, dbSave, downloadFile} from "@/helpers/index";
+import {dbGet, dbSave, downloadFile} from "@/helpers/index"
+const version = require('../../package.json').version
 
 export const DB_NAME = 'operations'
 
 
 export const getOperationData = () => {
-	let operations = dbGet(DB_NAME)
+	let operations = dbGet(DB_NAME, [])
 	let types = []
 	let recipients = []
 	operations.forEach(op => {
@@ -99,7 +100,7 @@ export const importCSV = (content) => {
 				detail,
 				debit,
 				credit
-			] = r.split(';')
+			] = r.split(';').map(c => decodeURIComponent(escape(c)))
 
 			credit = credit.replace('\r', '')
 				.replace(',', '.')
@@ -155,19 +156,38 @@ export const exportCSV = (operations) => {
 		.join("\n")
 
 	downloadFile(
-		'data:text/csv,' + rows,
+		'data:text/csv;charset=utf-8,' + encodeURI(rows),
 		`bank_operations_${Date.now()}.csv`
 	)
 }
 
 
 export const importJson = (content) => {
-	return JSON.parse(content)
+	const uint8Array = new Uint8Array(content.length);
+	for (let i = 0; i < content.length; i++) {
+		uint8Array[i] = content.charCodeAt(i);
+	}
+
+	const decodedContent = new TextDecoder("utf-8").decode(uint8Array);
+
+	const json = JSON.parse(decodedContent)
+	if (json.meta && json.operations) {
+		return json.operations
+	}
+	return json
 }
 
 export const exportJson = (operations) => {
+	let json = {
+		meta: {
+			date: new Date(),
+			version
+		},
+		operations
+	}
+
 	downloadFile(
-		'data:application/json,' + JSON.stringify(operations),
+		'data:application/json;charset=utf-8,' + encodeURIComponent(JSON.stringify(json)),
 		`bank_operations_${Date.now()}.json`
 	)
 }

@@ -9,7 +9,7 @@
 - [x] Export with filters
 - [x] Import from JSON
 - [x] Import from CSV
-- [ ] 🐛 Fix accents in imports
+- [x] 🐛 Fix accents in imports
 - [x] Bulk delete
 - [ ] Graphs
 
