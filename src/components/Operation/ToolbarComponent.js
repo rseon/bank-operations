@@ -144,7 +144,7 @@ const OperationToolbarComponent = ({
 						<>
 							<div className="btn-group ms-2">
 								<button type="button" className="btn btn-sm btn-outline-info dropdown-toggle" data-bs-toggle="dropdown">
-									⬇️ Export
+									⬇️ Export this list
 								</button>
 								<ul className="dropdown-menu dropdown-menu-end p-0">
 									<li>
