@@ -5,7 +5,7 @@ export const DB_NAME = 'operations'
 
 
 export const getOperationData = () => {
-	let operations = dbGet(DB_NAME)
+	let operations = dbGet(DB_NAME, [])
 	let types = []
 	let recipients = []
 	operations.forEach(op => {
