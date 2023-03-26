@@ -8,7 +8,7 @@ export const CHECKBOX_STATES = {
 
 export const downloadFile = (content, filename) => {
 	const link = document.createElement("a")
-	link.setAttribute("href", encodeURI(content))
+	link.setAttribute("href", content)
 	link.setAttribute("download", filename)
 	document.body.appendChild(link)
 
