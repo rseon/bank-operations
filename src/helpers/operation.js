@@ -1,5 +1,9 @@
-import {dbGet, dbSave, downloadFile} from "@/helpers/index"
+import {dbGet, dbSave, downloadFile, formatDate} from "@/helpers/index"
 const version = require('../../package.json').version
+
+const CSV_SEPARATOR = ';'
+const CSV_NEWLINE = "\n"
+const CSV_NEWLINE_TEXT = "[_n]"
 
 export const DB_NAME = 'operations'
 
@@ -86,7 +90,7 @@ export const destroyOperation = (id) => {
 }
 
 export const importCSV = (content) => {
-	const rows = content.split("\n")
+	const rows = content.split(CSV_NEWLINE)
 	rows.shift()
 
 	const idxPrefix = Date.now()
@@ -100,7 +104,13 @@ export const importCSV = (content) => {
 				detail,
 				debit,
 				credit
-			] = r.split(';').map(c => decodeURIComponent(escape(c)))
+			] = r.split(CSV_SEPARATOR).map(c => {
+				try {
+					return decodeURIComponent(escape(c))
+				} catch (e) {
+					return c
+				}
+			})
 
 			credit = credit.replace('\r', '')
 				.replace(',', '.')
@@ -116,7 +126,7 @@ export const importCSV = (content) => {
 				date,
 				type,
 				recipient,
-				detail: detail.replace('[_n]', "\n"),
+				detail: detail.replace(CSV_NEWLINE_TEXT, CSV_NEWLINE),
 				amount,
 			}
 		})
@@ -146,18 +156,18 @@ export const exportCSV = (operations) => {
 				date: op.date,
 				type: op.type,
 				recipient: op.recipient,
-				detail: op.detail.replace("\n", "[_n]"),
+				detail: op.detail.replace(CSV_NEWLINE, CSV_NEWLINE_TEXT),
 				debit,
 				credit,
 			}
 		})
 	]
-		.map(r => Object.values(r).join(';'))
-		.join("\n")
+		.map(r => Object.values(r).join(CSV_SEPARATOR))
+		.join(CSV_NEWLINE)
 
 	downloadFile(
 		'data:text/csv;charset=utf-8,' + encodeURI(rows),
-		`bank_operations_${Date.now()}.csv`
+		`Bank_Operations_${formatDate(Date.now(), 'yyyy-MM-dd_HH-mm')}.csv`
 	)
 }
 
@@ -188,7 +198,7 @@ export const exportJson = (operations) => {
 
 	downloadFile(
 		'data:application/json;charset=utf-8,' + encodeURIComponent(JSON.stringify(json)),
-		`bank_operations_${Date.now()}.json`
+		`Bank_Operations_${formatDate(Date.now(), 'yyyy-MM-dd_HH-mm')}.json`
 	)
 }
 
