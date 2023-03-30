@@ -12,6 +12,8 @@ export const getOperationData = () => {
 	let operations = dbGet(DB_NAME, [])
 	let types = []
 	let recipients = []
+	let years = []
+
 	operations.forEach(op => {
 		if (!types.includes(op.type)) {
 			types.push(op.type)
@@ -19,15 +21,30 @@ export const getOperationData = () => {
 		if (!recipients.includes(op.recipient)) {
 			recipients.push(op.recipient)
 		}
+		const year = op.date.split('-')[0]
+		if (!years.includes(year)) {
+			years.push(year)
+		}
 	})
 
 	types = types.sort()
 	recipients = recipients.sort()
+	years = years.sort().reverse()
+	const months = [...Array(12).keys()]
+		.map(key => new Date(0, key).toLocaleString('en', { month: 'long' }))
+		.reduce((prev, current, idx) => {
+			return {
+				...prev,
+				[(idx + 1).toString().padStart(2, "0")] : current,
+			}
+		}, {})
 
 	return {
 		types,
 		recipients,
 		operations,
+		years,
+		months,
 	}
 }
 

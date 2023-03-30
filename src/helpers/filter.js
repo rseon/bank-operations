@@ -1,20 +1,24 @@
 import {dbGet, dbSave, formatDate} from "@/helpers/index";
-import {lastDayOfMonth} from "date-fns";
 
 export const DB_FILTERS = 'filters'
 export const DB_SORT_BY = 'sortby'
 
-
-export const getFiltersData = () => {
+export const getFiltersBase = () => {
 	const today = new Date()
-	return dbGet(DB_FILTERS, {
-		from: formatDate(today, 'yyyy-MM-01'),
-		to: formatDate(lastDayOfMonth(today), 'yyyy-MM-dd'),
+	return {
+		year: formatDate(today, 'yyyy'),
+		month: formatDate(today, 'MM'),
 		type: '',
 		recipient: '',
 		detail: '',
-	})
+	}
 }
+
+
+export const getFiltersData = () => {
+	return dbGet(DB_FILTERS, getFiltersBase())
+}
+
 export const setFiltersData = (filters) => {
 	return dbSave(DB_FILTERS, filters)
 }
@@ -23,16 +27,17 @@ export const filterOperations = (operations, filters = {}, sortBy = {}) => {
 	const { field, direction } = sortBy
 
 	return operations.filter(op => {
-		if (filters.from && filters.to) {
-			if (op.date > filters.to || op.date < filters.from) {
-				return false
+		if (filters.year) {
+			if (filters.month) {
+				if (op.date > `${filters.year}-${filters.month}-31` || op.date < `${filters.year}-${filters.month}-01`) {
+					return false
+				}
 			}
-		}
-		if (filters.from && !filters.to && op.date < filters.from) {
-			return false
-		}
-		if (!filters.from && filters.to && op.date > filters.to) {
-			return false
+			else {
+				if (op.date < `${filters.year}-01-01` || op.date > `${filters.year}-12-31`) {
+					return false
+				}
+			}
 		}
 		if (filters.type && op.type.toLowerCase() !== filters.type.toLowerCase()) {
 			return false

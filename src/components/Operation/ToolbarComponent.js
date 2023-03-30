@@ -71,13 +71,14 @@ const OperationToolbarComponent = ({
 		reader.readAsBinaryString(file);
 	}
 
-	const exportData = (format) => {
+	const exportData = (format, all) => {
+		const rows = all ? operations : filtered
 		switch (format) {
 			case 'json':
-				exportJson(filtered)
+				exportJson(rows)
 				break
 			case 'csv':
-				exportCSV(filtered)
+				exportCSV(rows)
 				break
 		}
 	}
@@ -142,11 +143,11 @@ const OperationToolbarComponent = ({
 						<>
 							<div className="btn-group ms-2">
 								<button type="button" className="btn btn-sm btn-outline-info dropdown-toggle" data-bs-toggle="dropdown">
-									⬇️ Export this list
+									⬇️ Export this list ({filtered.length} rows)
 								</button>
 								<ul className="dropdown-menu dropdown-menu-end p-0">
 									<li>
-										<button className="dropdown-item" onClick={() => exportData('json')}>
+										<button className="dropdown-item" onClick={() => exportData('json', false)}>
 											JSON
 											<small className="text-muted"><br/>To be reimported in this app</small>
 										</button>
@@ -155,7 +156,29 @@ const OperationToolbarComponent = ({
 										<hr className="dropdown-divider m-0" />
 									</li>
 									<li>
-										<button className="dropdown-item" onClick={() => exportData('csv')}>
+										<button className="dropdown-item" onClick={() => exportData('csv', false)}>
+											CSV
+											<small className="text-muted"><br/>Human readable</small>
+										</button>
+									</li>
+								</ul>
+							</div>
+							<div className="btn-group ms-2">
+								<button type="button" className="btn btn-sm btn-outline-info dropdown-toggle" data-bs-toggle="dropdown">
+									⬇️ Export all
+								</button>
+								<ul className="dropdown-menu dropdown-menu-end p-0">
+									<li>
+										<button className="dropdown-item" onClick={() => exportData('json', true)}>
+											JSON
+											<small className="text-muted"><br/>To be reimported in this app</small>
+										</button>
+									</li>
+									<li>
+										<hr className="dropdown-divider m-0" />
+									</li>
+									<li>
+										<button className="dropdown-item" onClick={() => exportData('csv', true)}>
 											CSV
 											<small className="text-muted"><br/>Human readable</small>
 										</button>

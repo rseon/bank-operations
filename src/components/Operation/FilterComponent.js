@@ -1,13 +1,22 @@
-import {lastDayOfMonth} from "date-fns";
-import {formatDate} from "@/helpers";
-import {setFiltersData} from "@/helpers/filter";
+import {deepEqual, formatDate} from "@/helpers";
+import {getFiltersBase, setFiltersData} from "@/helpers/filter";
+import {useEffect, useMemo, useState} from "react";
 
 const OperationFilterComponent = ({
 	data,
 	filters,
 	setFilters
 }) => {
-	const { types, recipients } = data
+	const { types, recipients, years, months } = data
+	const [isThisMonth, setIsThisMonth] = useState(false)
+	const [hasFilter, setHasFilter] = useState(false)
+
+	const today = useMemo(() => new Date(), [])
+
+	useEffect(() => {
+		setIsThisMonth(formatDate(today, 'yyyy-MM') === `${filters.year}-${filters.month}`)
+		setHasFilter(!deepEqual(filters, getFiltersBase()))
+	}, [filters, today])
 
 	const onChange = (event) => {
 		updateFilter(event.target.name, event.target.value)
@@ -24,31 +33,65 @@ const OperationFilterComponent = ({
 		})
 	}
 
-	const setCurrentMonth = () => {
-		const today = new Date()
+	const eraseFilters = () => {
+		setFilters(() => {
+			const newFilters = getFiltersBase()
+			setFiltersData(newFilters)
+			return newFilters
+		})
+	}
 
-		updateFilter('from', formatDate(today, 'yyyy-MM-01'))
-		updateFilter('to', formatDate(lastDayOfMonth(today), 'yyyy-MM-dd'))
+	const filterOnCurrentMonth = () => {
+		updateFilter('year', formatDate(today, 'yyyy'))
+		updateFilter('month', formatDate(today, 'MM'))
 	}
 
 	return (
 		<div className="mb-3 card bg-light">
 			<div className="card-body">
 				<div className="row">
-					<div className="col">
+					<div className="col-4">
 						<div className="mb-2">
-							<label htmlFor="filter_from" className="form-label">From</label>
-							<input id="filter_from" name="from" type="date" className="form-control" value={filters.from} max={filters.to} onChange={onChange} autoComplete="off" />
+							<label htmlFor="filter_year" className="form-label">Year</label>
+							<select name="year" id="filter_year" className="form-control" value={filters.year} onChange={onChange} autoComplete="off">
+								{years.map((year, idx) => (
+									<option key={idx} value={year}>{year}</option>
+								))}
+							</select>
 						</div>
-						<div className="mb-2">
-							<label htmlFor="filter_to" className="form-label">To</label>
-							<input id="filter_to" name="to" type="date" className="form-control" value={filters.to} min={filters.from} onChange={onChange} autoComplete="off" />
-						</div>
-						<button className="btn btn-link p-0" onClick={setCurrentMonth}>
-							<small>Set current month</small>
-						</button>
 					</div>
-					<div className="col">
+					<div className="col-4">
+						<div className="mb-2">
+							<label htmlFor="filter_month" className="form-label">Month</label>
+							<select name="month" id="filter_month" className="form-control" value={filters.month} onChange={onChange} autoComplete="off">
+								<option value=""></option>
+								{Object.entries(months).map(([idx, month]) => (
+									<option key={idx} value={idx}>{month}</option>
+								))}
+							</select>
+						</div>
+					</div>
+					<div className="col-4">
+						<div className="row mt-4">
+							<div className="col-6 mt-2">
+								{!isThisMonth &&
+									<button className="btn btn-light" onClick={filterOnCurrentMonth}>
+										<small>📅 This month</small>
+									</button>
+								}
+							</div>
+							<div className="col-6 mt-2 text-end">
+								{hasFilter &&
+									<button className="btn btn-light" onClick={eraseFilters}>
+										<small>Reset filters</small>
+									</button>
+								}
+							</div>
+						</div>
+					</div>
+				</div>
+				<div className="row">
+					<div className="col-4">
 						<label htmlFor="filter_type" className="form-label">Type</label>
 						<select name="type" id="filter_type" className="form-control" value={filters.type} onChange={onChange} autoComplete="off">
 							<option value=""></option>
@@ -62,7 +105,7 @@ const OperationFilterComponent = ({
 							</button>
 						}
 					</div>
-					<div className="col">
+					<div className="col-4">
 						<label htmlFor="filter_type" className="form-label">Recipient</label>
 						<select name="recipient" id="filter_recipient" className="form-control" value={filters.recipient} onChange={onChange} autoComplete="off">
 							<option value=""></option>
@@ -76,7 +119,7 @@ const OperationFilterComponent = ({
 							</button>
 						}
 					</div>
-					<div className="col">
+					<div className="col-4">
 						<label htmlFor="filter_detail" className="form-label">Detail</label>
 						<input id="filter_detail" name="detail" type="search" className="form-control" value={filters.detail} onChange={onChange} autoComplete="off" />
 						{filters.detail !== '' &&
