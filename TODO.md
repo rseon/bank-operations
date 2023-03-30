@@ -13,8 +13,8 @@
 - [x] Bulk delete
 - [ ] Graphs
 - [x] Export all
-- [ ] Export only selected (bulk export)
-- [ ] When rows selected, hide "Import" and "Export all" buttons
+- [x] Export only selected (bulk export)
+- [x] When rows selected, hide "Import" and "Export all" buttons
 - [x] Change filters "From" and "To" by "Year" and "Month"
 - [x] Reset filters / Remove filters
 - [ ] 🐛 Fix month order

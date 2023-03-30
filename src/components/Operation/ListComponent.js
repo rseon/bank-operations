@@ -18,6 +18,7 @@ export default function OperationListComponent({
 	const [filtered, setFiltered] = useState([])
 	const [filters, setFilters] = useState({})
 	const [sortBy, setSortBy] = useState()
+	const [listChecked, setListChecked] = useState([])
 
 	useEffect(() => {
 		setFilters(getFiltersData)
@@ -60,6 +61,7 @@ export default function OperationListComponent({
 				filters={filters}
 				setFilters={setFilters}
 				onUpdated={onUpdatedLocal}
+				listChecked={listChecked}
 			/>
 
 			<TableComponent
@@ -70,6 +72,8 @@ export default function OperationListComponent({
 				toolbarComponent={toolbarComponent}
 				sortBy={sortBy}
 				setSortBy={saveSortBy}
+				listChecked={listChecked}
+				setListChecked={setListChecked}
 			/>
 		</>
 	)
