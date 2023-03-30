@@ -10,6 +10,7 @@ export default function Home() {
 		recipients: [],
 		operations: [],
 		balance: 0,
+		years: [],
 	})
 
 	const loadList = () => {

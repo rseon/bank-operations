@@ -10,6 +10,8 @@ const OperationTableComponent = ({
 	toolbarComponent,
 	sortBy,
 	setSortBy,
+	listChecked,
+	setListChecked,
 }, ref) => {
 	const { operations } = data
 	const [totals, setTotals] = useState({
@@ -19,12 +21,10 @@ const OperationTableComponent = ({
 	})
 	const checkboxAll = useRef()
 	const [isAllChecked, setIsAllChecked] = useState(CHECKBOX_STATES.empty)
-	const [listChecked, setListChecked] = useState([])
 	const [nbFiltered, setNbFiltered] = useState(0)
 
 	useImperativeHandle(ref, () => ({
 		setCheckboxChecked,
-		setListChecked
 	}))
 
 	useEffect(() => {

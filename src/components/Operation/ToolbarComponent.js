@@ -9,6 +9,7 @@ const OperationToolbarComponent = ({
 	filters,
 	setFilters,
 	onUpdated,
+	listChecked
 }, ref) => {
 
 	const { operations } = data
@@ -71,13 +72,27 @@ const OperationToolbarComponent = ({
 		reader.readAsBinaryString(file);
 	}
 
-	const exportData = (format) => {
+	const exportData = (format, which = 'filtered') => {
+		let rows
+		switch (which) {
+			case 'all':
+				rows = operations
+				break
+			case 'selected':
+				rows = filtered.filter(r => listChecked.includes(r.id))
+				break
+			case 'filtered':
+			default:
+				rows = filtered
+				break
+		}
+
 		switch (format) {
 			case 'json':
-				exportJson(filtered)
+				exportJson(rows)
 				break
 			case 'csv':
-				exportCSV(filtered)
+				exportCSV(rows)
 				break
 		}
 	}
@@ -118,35 +133,14 @@ const OperationToolbarComponent = ({
 				</div>
 				<div className="text-end mb-3">
 					{!isEmpty(forBulk) &&
-						<div className="btn-group me-2">
-							<button type="button" className="btn btn-sm btn-outline-warning dropdown-toggle" data-bs-toggle="dropdown">
-								🗑️ Delete selected ({forBulk.length})
-							</button>
-							<ul className="dropdown-menu dropdown-menu-end p-0">
-								<li>
-									<button className="dropdown-item" onClick={deleteSelected}>
-										Confirm deletion
-										<small className="text-muted"><br/>⚠️ No turning back !</small>
-									</button>
-								</li>
-							</ul>
-						</div>
-					}
-
-					<input className="d-none" type="file" accept="application/json,.json,text/csv,.csv" id="import" onChange={handleImport} />
-					<button className="btn btn-outline-info btn-sm" onClick={importData}>
-						⬆️ Import
-					</button>
-
-					{!isEmpty(filtered) &&
 						<>
 							<div className="btn-group ms-2">
 								<button type="button" className="btn btn-sm btn-outline-info dropdown-toggle" data-bs-toggle="dropdown">
-									⬇️ Export this list
+									⬇️ Export selected ({forBulk.length})
 								</button>
 								<ul className="dropdown-menu dropdown-menu-end p-0">
 									<li>
-										<button className="dropdown-item" onClick={() => exportData('json')}>
+										<button className="dropdown-item" onClick={() => exportData('json', 'selected')}>
 											JSON
 											<small className="text-muted"><br/>To be reimported in this app</small>
 										</button>
@@ -155,15 +149,89 @@ const OperationToolbarComponent = ({
 										<hr className="dropdown-divider m-0" />
 									</li>
 									<li>
-										<button className="dropdown-item" onClick={() => exportData('csv')}>
+										<button className="dropdown-item" onClick={() => exportData('csv', 'selected')}>
 											CSV
 											<small className="text-muted"><br/>Human readable</small>
 										</button>
 									</li>
 								</ul>
 							</div>
+
+							<div className="btn-group ms-2">
+								<button type="button" className="btn btn-sm btn-outline-warning dropdown-toggle" data-bs-toggle="dropdown">
+									🗑️ Delete selected ({forBulk.length})
+								</button>
+								<ul className="dropdown-menu dropdown-menu-end p-0">
+									<li>
+										<button className="dropdown-item" onClick={deleteSelected}>
+											Confirm deletion
+											<small className="text-muted"><br/>⚠️ No turning back !</small>
+										</button>
+									</li>
+								</ul>
+							</div>
 						</>
 					}
+
+					{isEmpty(forBulk) &&
+						<>
+							<input className="d-none" type="file" accept="application/json,.json,text/csv,.csv" id="import" onChange={handleImport} />
+							<button className="btn btn-outline-info btn-sm" onClick={importData}>
+								⬆️ Import
+							</button>
+
+							{!isEmpty(filtered) &&
+								<>
+									<div className="btn-group ms-2">
+										<button type="button" className="btn btn-sm btn-outline-info dropdown-toggle" data-bs-toggle="dropdown">
+											⬇️ Export this list ({filtered.length} rows)
+										</button>
+										<ul className="dropdown-menu dropdown-menu-end p-0">
+											<li>
+												<button className="dropdown-item" onClick={() => exportData('json')}>
+													JSON
+													<small className="text-muted"><br/>To be reimported in this app</small>
+												</button>
+											</li>
+											<li>
+												<hr className="dropdown-divider m-0" />
+											</li>
+											<li>
+												<button className="dropdown-item" onClick={() => exportData('csv')}>
+													CSV
+													<small className="text-muted"><br/>Human readable</small>
+												</button>
+											</li>
+										</ul>
+									</div>
+									<div className="btn-group ms-2">
+										<button type="button" className="btn btn-sm btn-outline-info dropdown-toggle" data-bs-toggle="dropdown">
+											⬇️ Export all
+										</button>
+										<ul className="dropdown-menu dropdown-menu-end p-0">
+											<li>
+												<button className="dropdown-item" onClick={() => exportData('json', 'all')}>
+													JSON
+													<small className="text-muted"><br/>To be reimported in this app</small>
+												</button>
+											</li>
+											<li>
+												<hr className="dropdown-divider m-0" />
+											</li>
+											<li>
+												<button className="dropdown-item" onClick={() => exportData('csv', 'all')}>
+													CSV
+													<small className="text-muted"><br/>Human readable</small>
+												</button>
+											</li>
+										</ul>
+									</div>
+								</>
+							}
+						</>
+					}
+
+
 				</div>
 			</div>
 			{!isEmpty(operations) && showFilters && (
