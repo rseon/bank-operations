@@ -1,7 +1,7 @@
 import {dbGet, dbSave, formatDate} from "@/helpers/index";
 
 export const DB_FILTERS = 'filters'
-export const DB_SORT_BY = 'sortby'
+export const DB_SORT_BY = 'sort_by'
 
 export const getFiltersBase = () => {
 	const today = new Date()
@@ -23,9 +23,7 @@ export const setFiltersData = (filters) => {
 	return dbSave(DB_FILTERS, filters)
 }
 
-export const filterOperations = (operations, filters = {}, sortBy = {}) => {
-	const { field, direction } = sortBy
-
+export const filterOperations = (operations, filters = {}, sortBy = []) => {
 	return operations.filter(op => {
 		if (filters.year) {
 			if (filters.month) {
@@ -49,22 +47,28 @@ export const filterOperations = (operations, filters = {}, sortBy = {}) => {
 			return false
 		}
 		return true
-	}).sort((a, b) => {
-		switch (field) {
-			case 'date':
-				return direction === 'asc' ? new Date(a.date) - new Date(b.date) : new Date(b.date) - new Date(a.date)
-			default:
-				return direction === 'asc' ? a[field].localeCompare(b[field]) : b[field].localeCompare(a[field])
-		}
-	})
+	}).sort(sortMultipleFields(sortBy))
 }
 
 export const getSortByData = () => {
-	return dbGet(DB_SORT_BY, {
+	return dbGet(DB_SORT_BY, [{
 		field: 'date',
 		direction: 'desc',
-	})
+	}])
 }
 export const setSortByData = (sortBy) => {
 	return dbSave(DB_SORT_BY, sortBy)
+}
+
+const sortMultipleFields = (fields) => {
+	return (a, b) => {
+		return fields.map(({field, direction}) => {
+			switch (field) {
+				case 'date':
+					return direction === 'asc' ? new Date(a.date) - new Date(b.date) : new Date(b.date) - new Date(a.date)
+				default:
+					return direction === 'asc' ? a[field].localeCompare(b[field]) : b[field].localeCompare(a[field])
+			}
+		}).reduce((p, n) => p ? p : n, 0)
+	}
 }

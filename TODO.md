@@ -19,7 +19,8 @@
 - [x] Reset filters / Remove filters
 - [x] 🐛 Fix month order
 - [ ] Merge system for imports (does not delete all data but avoid duplication)
-- [ ] Combine sorts (with Ctrl + Click on column)
+- [x] Combine sorts (with Ctrl + Click on column)
+- [ ] Replace Object by Map (?)
 
 ## UI
 - [ ] Use [react-bootstrap](https://react-bootstrap.github.io/)
