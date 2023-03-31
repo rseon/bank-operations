@@ -3,28 +3,28 @@ import {useMemo} from "react";
 import {getOperationData} from "@/helpers/operation";
 
 export default function Graphs() {
-	const data = useMemo(() => {
-		const { operations } = getOperationData()
+    const data = useMemo(() => {
+        const { operations } = getOperationData()
 
-		const byRecipient = {}
-		operations.forEach(op => {
-			if (!(op.recipient in byRecipient)) {
-				byRecipient[op.recipient] = []
-			}
-			byRecipient[op.recipient].push(op.amount)
+        const byRecipient = {}
+        operations.forEach(op => {
+            if (!(op.recipient in byRecipient)) {
+                byRecipient[op.recipient] = []
+            }
+            byRecipient[op.recipient].push(op.amount)
 
-		})
+        })
 
-		console.log(byRecipient)
-	}, [])
+        console.log(byRecipient)
+    }, [])
 
-	return (
-		<>
-			<HeaderComponent />
+    return (
+        <>
+            <HeaderComponent />
 
-			<div className="container">
-				Hello world!
-			</div>
-		</>
-	)
+            <div className="container">
+                Hello world!
+            </div>
+        </>
+    )
 }
