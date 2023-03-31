@@ -75,9 +75,6 @@ const OperationToolbarComponent = ({
 	const exportData = (format, which = 'filtered') => {
 		let rows
 		switch (which) {
-			case 'all':
-				rows = operations
-				break
 			case 'selected':
 				rows = filtered.filter(r => listChecked.includes(r.id))
 				break
@@ -135,6 +132,20 @@ const OperationToolbarComponent = ({
 					{!isEmpty(forBulk) &&
 						<>
 							<div className="btn-group ms-2">
+								<button type="button" className="btn btn-sm btn-outline-warning dropdown-toggle" data-bs-toggle="dropdown">
+									🗑️ Delete selected ({forBulk.length})
+								</button>
+								<ul className="dropdown-menu dropdown-menu-end p-0">
+									<li>
+										<button className="dropdown-item" onClick={deleteSelected}>
+											Confirm deletion
+											<small className="text-muted"><br/>⚠️ No turning back !</small>
+										</button>
+									</li>
+								</ul>
+							</div>
+
+							<div className="btn-group ms-2">
 								<button type="button" className="btn btn-sm btn-outline-info dropdown-toggle" data-bs-toggle="dropdown">
 									⬇️ Export selected ({forBulk.length})
 								</button>
@@ -156,20 +167,6 @@ const OperationToolbarComponent = ({
 									</li>
 								</ul>
 							</div>
-
-							<div className="btn-group ms-2">
-								<button type="button" className="btn btn-sm btn-outline-warning dropdown-toggle" data-bs-toggle="dropdown">
-									🗑️ Delete selected ({forBulk.length})
-								</button>
-								<ul className="dropdown-menu dropdown-menu-end p-0">
-									<li>
-										<button className="dropdown-item" onClick={deleteSelected}>
-											Confirm deletion
-											<small className="text-muted"><br/>⚠️ No turning back !</small>
-										</button>
-									</li>
-								</ul>
-							</div>
 						</>
 					}
 
@@ -184,7 +181,7 @@ const OperationToolbarComponent = ({
 								<>
 									<div className="btn-group ms-2">
 										<button type="button" className="btn btn-sm btn-outline-info dropdown-toggle" data-bs-toggle="dropdown">
-											⬇️ Export this list ({filtered.length} rows)
+											⬇️ Export these {filtered.length} rows
 										</button>
 										<ul className="dropdown-menu dropdown-menu-end p-0">
 											<li>
@@ -198,28 +195,6 @@ const OperationToolbarComponent = ({
 											</li>
 											<li>
 												<button className="dropdown-item" onClick={() => exportData('csv')}>
-													CSV
-													<small className="text-muted"><br/>Human readable</small>
-												</button>
-											</li>
-										</ul>
-									</div>
-									<div className="btn-group ms-2">
-										<button type="button" className="btn btn-sm btn-outline-info dropdown-toggle" data-bs-toggle="dropdown">
-											⬇️ Export all
-										</button>
-										<ul className="dropdown-menu dropdown-menu-end p-0">
-											<li>
-												<button className="dropdown-item" onClick={() => exportData('json', 'all')}>
-													JSON
-													<small className="text-muted"><br/>To be reimported in this app</small>
-												</button>
-											</li>
-											<li>
-												<hr className="dropdown-divider m-0" />
-											</li>
-											<li>
-												<button className="dropdown-item" onClick={() => exportData('csv', 'all')}>
 													CSV
 													<small className="text-muted"><br/>Human readable</small>
 												</button>
