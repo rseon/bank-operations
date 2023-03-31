@@ -30,14 +30,14 @@ export const getOperationData = () => {
 	types = types.sort()
 	recipients = recipients.sort()
 	years = years.sort().reverse()
-	const months = [...Array(12).keys()]
+
+	const monthNames = [...Array(12).keys()]
 		.map(key => new Date(0, key).toLocaleString('en', { month: 'long' }))
-		.reduce((prev, current, idx) => {
-			return {
-				...prev,
-				[(idx + 1).toString().padStart(2, "0")] : current,
-			}
-		}, {})
+
+	const months = new Map()
+	monthNames.forEach((month, i) => {
+		months.set((i + 1).toString().padStart(2, "0"), month)
+	})
 
 	return {
 		types,

@@ -65,8 +65,8 @@ const OperationFilterComponent = ({
 							<label htmlFor="filter_month" className="form-label">Month</label>
 							<select name="month" id="filter_month" className="form-control" value={filters.month} onChange={onChange} autoComplete="off">
 								<option value=""></option>
-								{Object.entries(months).map(([idx, month]) => (
-									<option key={idx} value={idx}>{month}</option>
+								{[...months.keys()].map((idx) => (
+									<option key={idx} value={idx}>{months.get(idx)}</option>
 								))}
 							</select>
 						</div>

@@ -17,7 +17,7 @@
 - [x] When rows selected, hide "Import" and "Export all" buttons
 - [x] Change filters "From" and "To" by "Year" and "Month"
 - [x] Reset filters / Remove filters
-- [ ] 🐛 Fix month order
+- [x] 🐛 Fix month order
 - [ ] Merge system for imports (does not delete all data but avoid duplication)
 - [ ] Combine sorts (with Ctrl + Click on column)
 
