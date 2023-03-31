@@ -17,7 +17,7 @@ export default function OperationListComponent({
 	// Filters
 	const [filtered, setFiltered] = useState([])
 	const [filters, setFilters] = useState({})
-	const [sortBy, setSortBy] = useState()
+	const [sortBy, setSortBy] = useState([])
 	const [listChecked, setListChecked] = useState([])
 
 	useEffect(() => {
@@ -31,14 +31,20 @@ export default function OperationListComponent({
 
 	const onUpdatedLocal = () => {
 		tableComponent.current?.setCheckboxChecked(CHECKBOX_STATES.empty)
-		tableComponent.current?.setListChecked([])
 		toolbarComponent.current?.setForBulk([])
+		setListChecked([])
 		onUpdated()
 	}
 
 	const saveSortBy = (newSortBy) => {
 		setSortBy(newSortBy)
-		setSortByData(newSortBy)
+
+		if (typeof newSortBy === 'function') {
+			setSortByData(newSortBy(sortBy))
+		}
+		else {
+			setSortByData(newSortBy)
+		}
 	}
 
 	return (

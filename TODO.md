@@ -17,9 +17,10 @@
 - [x] When rows selected, hide "Import" and "Export all" buttons
 - [x] Change filters "From" and "To" by "Year" and "Month"
 - [x] Reset filters / Remove filters
-- [ ] 🐛 Fix month order
-- [ ] Merge system for imports (does not delete all data but avoid duplication)
-- [ ] Combine sorts (with Ctrl + Click on column)
+- [x] 🐛 Fix month order
+- [x] Merge system for imports (does not delete all data but avoid duplication)
+- [x] Combine sorts (with Ctrl + Click on column)
+- [ ] Replace Object by Map (?)
 
 ## UI
 - [ ] Use [react-bootstrap](https://react-bootstrap.github.io/)

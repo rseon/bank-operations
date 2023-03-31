@@ -1,4 +1,4 @@
-import {isEmpty} from "@/helpers";
+import {deepEqual, isEmpty} from "@/helpers";
 import {forwardRef, useEffect, useImperativeHandle, useState} from "react";
 import FilterComponent from "@/components/Operation/FilterComponent";
 import {setOperationsData, exportCSV, exportJson, importCSV, importJson, removeOperations} from "@/helpers/operation";
@@ -44,7 +44,7 @@ const OperationToolbarComponent = ({
 			return
 		}
 
-		if (!isEmpty(operations) && !confirm('This will overwrite all data. Continue?')) {
+		if (!isEmpty(operations) && !confirm('This will add missing data. Continue?')) {
 			return
 		}
 
@@ -65,8 +65,39 @@ const OperationToolbarComponent = ({
 			}
 
 			if (result) {
-				setOperationsData(result)
+				// Merge if existing operations
+				let nbRows = result.length
+				if (!isEmpty(operations)) {
+					const resultFiltered = result.filter(row => {
+						return !operations.find(operation => {
+							const rowWithoutId = {...row}
+							const operationWithoutId = {...operation}
+							delete rowWithoutId.id
+							delete operationWithoutId.id
+							return deepEqual(operationWithoutId, rowWithoutId)
+						})
+					})
+
+					nbRows = resultFiltered.length
+
+					if (nbRows > 0) {
+						setOperationsData([
+							...resultFiltered,
+							...operations,
+						])
+					}
+				}
+				else {
+					setOperationsData(result)
+				}
 				onUpdated()
+
+				if (nbRows > 0) {
+					alert(`${nbRows} rows added!`)
+				}
+				else {
+					alert(`No row added.`)
+				}
 			}
 		};
 		reader.readAsBinaryString(file);
@@ -75,9 +106,6 @@ const OperationToolbarComponent = ({
 	const exportData = (format, which = 'filtered') => {
 		let rows
 		switch (which) {
-			case 'all':
-				rows = operations
-				break
 			case 'selected':
 				rows = filtered.filter(r => listChecked.includes(r.id))
 				break
@@ -89,7 +117,7 @@ const OperationToolbarComponent = ({
 
 		switch (format) {
 			case 'json':
-				exportJson(rows)
+				exportJson(rows, filters)
 				break
 			case 'csv':
 				exportCSV(rows)
@@ -135,6 +163,20 @@ const OperationToolbarComponent = ({
 					{!isEmpty(forBulk) &&
 						<>
 							<div className="btn-group ms-2">
+								<button type="button" className="btn btn-sm btn-outline-warning dropdown-toggle" data-bs-toggle="dropdown">
+									🗑️ Delete selected ({forBulk.length})
+								</button>
+								<ul className="dropdown-menu dropdown-menu-end p-0">
+									<li>
+										<button className="dropdown-item" onClick={deleteSelected}>
+											Confirm deletion
+											<small className="text-muted"><br/>⚠️ No turning back !</small>
+										</button>
+									</li>
+								</ul>
+							</div>
+
+							<div className="btn-group ms-2">
 								<button type="button" className="btn btn-sm btn-outline-info dropdown-toggle" data-bs-toggle="dropdown">
 									⬇️ Export selected ({forBulk.length})
 								</button>
@@ -156,20 +198,6 @@ const OperationToolbarComponent = ({
 									</li>
 								</ul>
 							</div>
-
-							<div className="btn-group ms-2">
-								<button type="button" className="btn btn-sm btn-outline-warning dropdown-toggle" data-bs-toggle="dropdown">
-									🗑️ Delete selected ({forBulk.length})
-								</button>
-								<ul className="dropdown-menu dropdown-menu-end p-0">
-									<li>
-										<button className="dropdown-item" onClick={deleteSelected}>
-											Confirm deletion
-											<small className="text-muted"><br/>⚠️ No turning back !</small>
-										</button>
-									</li>
-								</ul>
-							</div>
 						</>
 					}
 
@@ -184,7 +212,7 @@ const OperationToolbarComponent = ({
 								<>
 									<div className="btn-group ms-2">
 										<button type="button" className="btn btn-sm btn-outline-info dropdown-toggle" data-bs-toggle="dropdown">
-											⬇️ Export this list ({filtered.length} rows)
+											⬇️ Export these {filtered.length} rows
 										</button>
 										<ul className="dropdown-menu dropdown-menu-end p-0">
 											<li>
@@ -198,28 +226,6 @@ const OperationToolbarComponent = ({
 											</li>
 											<li>
 												<button className="dropdown-item" onClick={() => exportData('csv')}>
-													CSV
-													<small className="text-muted"><br/>Human readable</small>
-												</button>
-											</li>
-										</ul>
-									</div>
-									<div className="btn-group ms-2">
-										<button type="button" className="btn btn-sm btn-outline-info dropdown-toggle" data-bs-toggle="dropdown">
-											⬇️ Export all
-										</button>
-										<ul className="dropdown-menu dropdown-menu-end p-0">
-											<li>
-												<button className="dropdown-item" onClick={() => exportData('json', 'all')}>
-													JSON
-													<small className="text-muted"><br/>To be reimported in this app</small>
-												</button>
-											</li>
-											<li>
-												<hr className="dropdown-divider m-0" />
-											</li>
-											<li>
-												<button className="dropdown-item" onClick={() => exportData('csv', 'all')}>
 													CSV
 													<small className="text-muted"><br/>Human readable</small>
 												</button>
