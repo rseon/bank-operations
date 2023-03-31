@@ -9,22 +9,25 @@ export const DB_NAME = 'operations'
 
 
 export const getOperationData = () => {
-	let operations = dbGet(DB_NAME, [])
-	let types = []
-	let recipients = []
-	let years = []
+	let types = [], recipients = [], years = []
 
-	operations.forEach(op => {
+	const operations = dbGet(DB_NAME, []).map(op => {
 		if (!types.includes(op.type)) {
 			types.push(op.type)
 		}
 		if (!recipients.includes(op.recipient)) {
 			recipients.push(op.recipient)
 		}
+
 		const year = op.date.split('-')[0]
 		if (!years.includes(year)) {
 			years.push(year)
 		}
+
+		if (typeof op.id !== 'string') {
+			op.id = op.id.toString()
+		}
+		return op
 	})
 
 	types = types.sort()

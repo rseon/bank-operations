@@ -167,7 +167,7 @@ const OperationFormComponent = ({
 
 				<div className="mb-3">
 					<label htmlFor="detail" className="form-label">Description</label>
-					<textarea id="detail" name="detail" defaultValue={formData.detail} className="form-control" disabled={loading} onChange={updateField} autoComplete="off" />
+					<textarea id="detail" name="detail" value={formData.detail} className="form-control" disabled={loading} onChange={updateField} autoComplete="off" />
 				</div>
 
 				<button type="submit" className="btn btn-outline-primary btn-lg d-flex w-100 justify-content-center align-items-center" disabled={loading}>
