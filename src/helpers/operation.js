@@ -204,11 +204,12 @@ export const importJson = (content) => {
 	return json
 }
 
-export const exportJson = (operations) => {
+export const exportJson = (operations, filters) => {
 	let json = {
 		meta: {
 			date: new Date(),
-			version
+			version,
+			filters
 		},
 		operations
 	}

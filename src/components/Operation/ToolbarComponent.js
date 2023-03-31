@@ -89,7 +89,7 @@ const OperationToolbarComponent = ({
 
 		switch (format) {
 			case 'json':
-				exportJson(rows)
+				exportJson(rows, filters)
 				break
 			case 'csv':
 				exportCSV(rows)
