@@ -8,7 +8,7 @@ export default function OperationSortByComponent({ sortBy, setSortBy, field }) {
 
 
 	const toggleSort = (e) => {
-		let direction = 'desc'
+		let direction = 'asc'
 		if (fieldSorted) {
 			direction = fieldSorted.direction === 'asc' ? 'desc' : 'asc'
 		}
@@ -17,7 +17,7 @@ export default function OperationSortByComponent({ sortBy, setSortBy, field }) {
 		if (e.ctrlKey) {
 			setSortBy((state) => {
 				let newSortBy = state.filter(s => s.field !== field)
-				newSortBy.unshift({
+				newSortBy.push({
 					field,
 					direction
 				})
