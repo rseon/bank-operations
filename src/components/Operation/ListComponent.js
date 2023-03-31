@@ -31,8 +31,8 @@ export default function OperationListComponent({
 
 	const onUpdatedLocal = () => {
 		tableComponent.current?.setCheckboxChecked(CHECKBOX_STATES.empty)
-		tableComponent.current?.setListChecked([])
 		toolbarComponent.current?.setForBulk([])
+		setListChecked([])
 		onUpdated()
 	}
 

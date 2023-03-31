@@ -209,7 +209,7 @@ export const exportJson = (operations, filters) => {
 		meta: {
 			date: new Date(),
 			version,
-			filters
+			filters: Object.fromEntries(Object.entries(filters).filter(([k, v]) => v !== ''))
 		},
 		operations
 	}
