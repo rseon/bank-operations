@@ -1,4 +1,4 @@
-import {isEmpty} from "@/helpers";
+import {deepEqual, isEmpty} from "@/helpers";
 import {forwardRef, useEffect, useImperativeHandle, useState} from "react";
 import FilterComponent from "@/components/Operation/FilterComponent";
 import {setOperationsData, exportCSV, exportJson, importCSV, importJson, removeOperations} from "@/helpers/operation";
@@ -44,7 +44,7 @@ const OperationToolbarComponent = ({
 			return
 		}
 
-		if (!isEmpty(operations) && !confirm('This will overwrite all data. Continue?')) {
+		if (!isEmpty(operations) && !confirm('This will add missing data. Continue?')) {
 			return
 		}
 
@@ -65,8 +65,39 @@ const OperationToolbarComponent = ({
 			}
 
 			if (result) {
-				setOperationsData(result)
+				// Merge if existing operations
+				let nbRows = result.length
+				if (!isEmpty(operations)) {
+					const resultFiltered = result.filter(row => {
+						return !operations.find(operation => {
+							const rowWithoutId = {...row}
+							const operationWithoutId = {...operation}
+							delete rowWithoutId.id
+							delete operationWithoutId.id
+							return deepEqual(operationWithoutId, rowWithoutId)
+						})
+					})
+
+					nbRows = resultFiltered.length
+
+					if (nbRows > 0) {
+						setOperationsData([
+							...resultFiltered,
+							...operations,
+						])
+					}
+				}
+				else {
+					setOperationsData(result)
+				}
 				onUpdated()
+
+				if (nbRows > 0) {
+					alert(`${nbRows} rows added!`)
+				}
+				else {
+					alert(`No row added.`)
+				}
 			}
 		};
 		reader.readAsBinaryString(file);

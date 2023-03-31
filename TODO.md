@@ -18,7 +18,7 @@
 - [x] Change filters "From" and "To" by "Year" and "Month"
 - [x] Reset filters / Remove filters
 - [x] 🐛 Fix month order
-- [ ] Merge system for imports (does not delete all data but avoid duplication)
+- [x] Merge system for imports (does not delete all data but avoid duplication)
 - [x] Combine sorts (with Ctrl + Click on column)
 - [ ] Replace Object by Map (?)
 
