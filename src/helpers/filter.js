@@ -1,7 +1,7 @@
 import {dbGet, dbSave, formatDate} from "@/helpers/index";
 
 export const DB_FILTERS = 'filters'
-export const DB_SORT_BY = 'sort_by'
+export const DB_SORT_BY = 'sortby'
 
 export const getFiltersBase = () => {
 	const today = new Date()
@@ -51,13 +51,23 @@ export const filterOperations = (operations, filters = {}, sortBy = []) => {
 }
 
 export const getSortByData = () => {
-	return dbGet(DB_SORT_BY, [{
-		field: 'date',
-		direction: 'desc',
-	}])
+	let sortBy = dbGet(DB_SORT_BY, withSortById([
+		{field: 'date', direction: 'desc'},
+	]))
+	if (!Array.isArray(sortBy)) {
+		sortBy = [sortBy]
+	}
+	return sortBy
 }
+
 export const setSortByData = (sortBy) => {
 	return dbSave(DB_SORT_BY, sortBy)
+}
+
+export const withSortById = (sortBy) => {
+	sortBy = sortBy.filter(s => s.field !== 'id')
+	sortBy.push({field: 'id', direction: 'desc'})
+	return sortBy
 }
 
 const sortMultipleFields = (fields) => {

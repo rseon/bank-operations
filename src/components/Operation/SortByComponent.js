@@ -1,4 +1,5 @@
 import {useMemo} from "react";
+import {withSortById} from "@/helpers/filter";
 
 export default function OperationSortByComponent({ sortBy, setSortBy, field }) {
 
@@ -21,14 +22,14 @@ export default function OperationSortByComponent({ sortBy, setSortBy, field }) {
 					field,
 					direction
 				})
-				return newSortBy
+				return withSortById(newSortBy)
 			})
 		}
 		else {
-			setSortBy([{
+			setSortBy(withSortById([{
 				field,
 				direction
-			}])
+			}]))
 		}
 	}
 
