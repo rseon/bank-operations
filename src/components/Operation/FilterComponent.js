@@ -131,12 +131,12 @@ const OperationFilterComponent = ({
                     <div className="col-3">
                         <label htmlFor="filter_type" className="form-label">Balance</label>
                         <select name="balance" id="filter_balance" className="form-control" value={filters.balance} onChange={onChange} autoComplete="off">
-                            <option value="both">Both</option>
+                            <option value=""></option>
                             <option value="credit">Credit only</option>
                             <option value="debit">Debit only</option>
                         </select>
-                        {filters.balance !== 'both' &&
-                            <button className="btn btn-link p-0" onClick={() => updateFilter('balance', 'both')}>
+                        {filters.balance !== '' &&
+                            <button className="btn btn-link p-0" onClick={() => updateFilter('balance', '')}>
                                 <small>Reset filter</small>
                             </button>
                         }
