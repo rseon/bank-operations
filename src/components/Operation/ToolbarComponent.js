@@ -21,12 +21,6 @@ const OperationToolbarComponent = ({
         setNbFilters(Object.values(filters).filter(f => f !== '').length)
     }, [filters])
 
-    useEffect(() => {
-        const { Dropdown } = require("bootstrap")
-        const dropdownElementList = document.querySelectorAll('.dropdown-toggle')
-        const dropdownList = [...document.querySelectorAll('.dropdown-toggle')].map(dropdownToggleEl => new Dropdown(dropdownToggleEl))
-    }, [])
-
     const importData = () => {
         const input = document.getElementById('import')
         input.value = ''

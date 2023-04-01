@@ -1,13 +1,17 @@
 import Link from "next/link";
 import {useRouter} from "next/router";
+import FormOnlyComponent from "@/components/Operation/FormComponent";
+import ModalComponent from "@/components/ModalComponent";
+import {useRef} from "react";
 
-export default function HeaderComponent() {
+export default function HeaderComponent({ data, loadList }) {
     const router = useRouter()
 
-    const showModal = () => {
-        const { Modal } = require("bootstrap")
-        const myModal = new Modal("#createModal")
-        myModal.show()
+    const modalComponent = useRef()
+
+    const formCreateSubmitted = () => {
+        modalComponent.current?.close()
+        loadList()
     }
 
     return (
@@ -26,14 +30,20 @@ export default function HeaderComponent() {
                         </li>
                     </ul>
                     <div className="col-md-3 text-end">
-                        {router.pathname === '/' &&
-                            <button className="btn btn-outline-primary" onClick={showModal}>
-                                ➕ New operation
-                            </button>
-                        }
+                        <button className="btn btn-outline-primary" data-bs-toggle="modal" data-bs-target="#createModal">
+                            ➕ New operation
+                        </button>
                     </div>
                 </header>
             </div>
+
+            <ModalComponent id="createModal" title="New operation" ref={modalComponent}>
+                <FormOnlyComponent
+                    method="create"
+                    data={data}
+                    onSubmitted={formCreateSubmitted}
+                />
+            </ModalComponent>
         </>
     )
 }

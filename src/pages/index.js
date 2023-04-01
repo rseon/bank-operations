@@ -1,5 +1,4 @@
 import HeaderComponent from "@/components/HeaderComponent"
-import FormComponent from "@/components/Operation/FormComponent"
 import ListComponent from "@/components/Operation/ListComponent"
 import {useEffect, useState} from "react"
 import {getOperationData} from "@/helpers/operation";
@@ -23,14 +22,7 @@ export default function Home() {
 
     return (
         <>
-            <HeaderComponent />
-            <FormComponent
-                modalId="createModal"
-                modalTitle="New operation"
-                method="create"
-                data={data}
-                onSubmitted={loadList}
-            />
+            <HeaderComponent data={data} loadList={loadList} />
 
             <div className="container">
                 <ListComponent

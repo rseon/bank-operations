@@ -19,6 +19,8 @@ export default function Document() {
                         {' '} and hosted on <a href="https://github.com/rseon/bank-operations" className="text-muted text-decoration-none" target="_blank">Github</a>.
                     </div>
                 </footer>
+
+                <div id="modal" />
                 <NextScript />
             </body>
         </Html>

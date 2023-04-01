@@ -1,13 +1,12 @@
 import HeaderComponent from "@/components/HeaderComponent"
-import {getOperationData, getOperationsFromDb} from "@/helpers/operation";
+import {getOperationData} from "@/helpers/operation";
 import GraphByRecipient from "@/components/Operation/Graph/ByRecipientComponent";
 import {useEffect, useRef, useState} from "react";
 import GraphByType from "@/components/Operation/Graph/ByTypeComponent";
 import GraphByBalance from "@/components/Operation/Graph/ByBalanceComponent";
 import GraphByDate from "@/components/Operation/Graph/ByDateComponent";
-import ToolbarComponent from "@/components/Operation/ToolbarComponent";
 import {filterOperations, getFiltersData} from "@/helpers/filter";
-import {CHECKBOX_STATES, isEmpty} from "@/helpers";
+import {isEmpty} from "@/helpers";
 import FilterComponent from "@/components/Operation/FilterComponent";
 
 export default function Graphs() {
@@ -19,8 +18,12 @@ export default function Graphs() {
 
     const toolbarComponent = useRef()
 
-    useEffect(() => {
+    const loadList = () => {
         setData(getOperationData())
+    }
+
+    useEffect(() => {
+        loadList()
     }, [])
 
     useEffect(() => {
@@ -39,7 +42,7 @@ export default function Graphs() {
 
     return (
         <>
-            <HeaderComponent />
+            <HeaderComponent data={data} loadList={loadList} />
 
             <div className="container">
                 {data &&
