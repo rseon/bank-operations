@@ -68,7 +68,10 @@ export default function GraphByBalance({ operations }) {
             options={getOptions({
                 title,
                 plugins: {
-                    tooltip
+                    tooltip,
+                    autocolors: {
+                        enabled: false
+                    }
                 }
             })}
             redraw={true}

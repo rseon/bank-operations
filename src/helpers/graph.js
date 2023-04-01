@@ -3,7 +3,11 @@ import {deepMerge} from "@/helpers/index";
 export const getOptions = (options = {}) => {
     let settings = {
         responsive: true,
-        plugins: {},
+        plugins: {
+            autocolors: {
+                mode: 'data'
+            }
+        },
     }
 
     if (options.title) {

@@ -11,6 +11,7 @@
   "dependencies": {
     "bootstrap": "^5.2.3",
     "chart.js": "^4.2.1",
+    "chartjs-plugin-autocolors": "^0.2.2",
     "date-fns": "^2.29.3",
     "eslint": "8.35.0",
     "eslint-config-next": "13.2.3",

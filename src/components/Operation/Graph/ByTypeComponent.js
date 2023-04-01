@@ -3,8 +3,9 @@ import { Chart as ChartJS, ArcElement, Tooltip, Legend, Colors, Title } from 'ch
 import { Doughnut } from 'react-chartjs-2';
 import {getOptions} from "@/helpers/graph";
 import {currency} from "@/helpers";
+import autocolors from 'chartjs-plugin-autocolors';
 
-ChartJS.register(ArcElement, Tooltip, Legend, Colors, Title);
+ChartJS.register(ArcElement, Tooltip, Legend, Colors, Title, autocolors);
 
 export default function GraphByType({ operations }) {
 

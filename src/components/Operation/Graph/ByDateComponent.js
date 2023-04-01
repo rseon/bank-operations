@@ -84,7 +84,12 @@ export default function GraphByDate({ operations }) {
             data={chart}
             options={getOptions({
                 title: 'Operations',
-                plugins: {tooltip},
+                plugins: {
+                    tooltip,
+                    autocolors: {
+                        enabled: false
+                    }
+                },
                 maintainAspectRatio: false,
             })}
             redraw={true}
