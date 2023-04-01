@@ -6,81 +6,81 @@ import ToolbarComponent from "@/components/Operation/ToolbarComponent";
 import TableComponent from "@/components/Operation/TableComponent";
 
 export default function OperationListComponent({
-	data,
-	onUpdated,
+    data,
+    onUpdated,
 }) {
-	const formComponent = useRef()
-	const toolbarComponent = useRef()
-	const tableComponent = useRef()
-	const { operations } = data
+    const formComponent = useRef()
+    const toolbarComponent = useRef()
+    const tableComponent = useRef()
+    const { operations } = data
 
-	// Filters
-	const [filtered, setFiltered] = useState([])
-	const [filters, setFilters] = useState({})
-	const [sortBy, setSortBy] = useState([])
-	const [listChecked, setListChecked] = useState([])
+    // Filters
+    const [filtered, setFiltered] = useState([])
+    const [filters, setFilters] = useState({})
+    const [sortBy, setSortBy] = useState([])
+    const [listChecked, setListChecked] = useState([])
 
-	useEffect(() => {
-		setFilters(getFiltersData)
-		setSortBy(getSortByData)
-	}, [])
+    useEffect(() => {
+        setFilters(getFiltersData)
+        setSortBy(getSortByData)
+    }, [])
 
-	useEffect(() => {
-		setFiltered(filterOperations(operations, filters, sortBy))
-	}, [operations, filters, sortBy])
+    useEffect(() => {
+        setFiltered(filterOperations(operations, filters, sortBy))
+    }, [operations, filters, sortBy])
 
-	const onUpdatedLocal = () => {
-		tableComponent.current?.setCheckboxChecked(CHECKBOX_STATES.empty)
-		toolbarComponent.current?.setForBulk([])
-		setListChecked([])
-		onUpdated()
-	}
+    const onUpdatedLocal = () => {
+        tableComponent.current?.setCheckboxChecked(CHECKBOX_STATES.empty)
+        toolbarComponent.current?.setForBulk([])
+        setListChecked([])
+        onUpdated()
+    }
 
-	const saveSortBy = (newSortBy) => {
-		setSortBy(newSortBy)
+    const saveSortBy = (newSortBy) => {
+        setSortBy(newSortBy)
 
-		if (typeof newSortBy === 'function') {
-			setSortByData(newSortBy(sortBy))
-		}
-		else {
-			setSortByData(newSortBy)
-		}
-	}
+        if (typeof newSortBy === 'function') {
+            setSortByData(newSortBy(sortBy))
+        }
+        else {
+            setSortByData(newSortBy)
+        }
+    }
 
-	return (
-		<>
-			{!isEmpty(operations) &&
-				<FormComponent
-					ref={formComponent}
-					modalId="editModal"
-					modalTitle="Edit operation"
-					method='update'
-					data={data}
-					onSubmitted={onUpdatedLocal}
-				/>
-			}
+    return (
+        <>
+            {!isEmpty(operations) &&
+                <FormComponent
+                    ref={formComponent}
+                    modalId="editModal"
+                    modalTitle="Edit operation"
+                    method='update'
+                    data={data}
+                    onSubmitted={onUpdatedLocal}
+                />
+            }
 
-			<ToolbarComponent
-				ref={toolbarComponent}
-				data={data}
-				filtered={filtered}
-				filters={filters}
-				setFilters={setFilters}
-				onUpdated={onUpdatedLocal}
-				listChecked={listChecked}
-			/>
+            <ToolbarComponent
+                ref={toolbarComponent}
+                data={data}
+                filtered={filtered}
+                filters={filters}
+                setFilters={setFilters}
+                onUpdated={onUpdatedLocal}
+                listChecked={listChecked}
+            />
 
-			<TableComponent
-				ref={tableComponent}
-				data={data}
-				filtered={filtered}
-				formComponent={formComponent}
-				toolbarComponent={toolbarComponent}
-				sortBy={sortBy}
-				setSortBy={saveSortBy}
-				listChecked={listChecked}
-				setListChecked={setListChecked}
-			/>
-		</>
-	)
+            <TableComponent
+                ref={tableComponent}
+                data={data}
+                filtered={filtered}
+                formComponent={formComponent}
+                toolbarComponent={toolbarComponent}
+                sortBy={sortBy}
+                setSortBy={saveSortBy}
+                listChecked={listChecked}
+                setListChecked={setListChecked}
+            />
+        </>
+    )
 }
