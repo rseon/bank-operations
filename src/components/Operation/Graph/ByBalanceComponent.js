@@ -9,6 +9,7 @@ ChartJS.register(ArcElement, Tooltip, Legend, Colors, Title);
 
 export default function GraphByBalance({ operations }) {
 
+    const [data, setData] = useState(null)
     const [chart, setChart] = useState(null)
     const [reload, setReload] = useState(0)
 
@@ -16,23 +17,47 @@ export default function GraphByBalance({ operations }) {
         return `Balance (${currency(getBalanceTotal(operations))})`
     }, [operations])
 
-    useEffect(() => {
-        const data = {
-            Credit: 0,
-            Debit: 0
+    const tooltip = useMemo(() => {
+        return {
+            callbacks: {
+                label: (context) => {
+                    let label = context.dataset.label || ''
+                    return `Total: ${currency(context.parsed)}`
+                },
+                title: (items) => {
+                    const item = items[0]
+                    return `${item.label} (${data.count[item.label]} operations)`
+                }
+            }
         }
+    }, [data])
+
+    useEffect(() => {
+        const infos = {
+            chartData: {
+                Credit: 0,
+                Debit: 0
+            },
+            count: {
+                Credit: 0,
+                Debit: 0
+            }
+        }
+
         operations.forEach(op => {
-            const amount = parseFloat(op.amount);
-            data[(amount < 0 ? 'Debit' : 'Credit')] += amount
+            const amount = parseFloat(op.amount)
+            const key = (amount < 0 ? 'Debit' : 'Credit')
+            infos.chartData[key] += amount
+            infos.count[key] += 1
         })
 
         setChart({
-            labels: Object.keys(data),
+            labels: Object.keys(infos.chartData),
             datasets: [{
-                label: 'Nb operations',
-                data: Object.values(data),
+                data: Object.values(infos.chartData),
             }],
         })
+        setData(infos)
         setReload(reload + 1)
     }, [operations])
 
@@ -40,7 +65,12 @@ export default function GraphByBalance({ operations }) {
         ? <Doughnut
             key={reload}
             data={chart}
-            options={getOptions({ title })}
+            options={getOptions({
+                title,
+                plugins: {
+                    tooltip
+                }
+            })}
             redraw={true}
         />
         : null

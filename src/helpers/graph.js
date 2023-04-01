@@ -1,5 +1,7 @@
+import {deepMerge} from "@/helpers/index";
+
 export const getOptions = (options = {}) => {
-    const settings = {
+    let settings = {
         responsive: true,
         plugins: {},
     }
@@ -9,7 +11,8 @@ export const getOptions = (options = {}) => {
             display: true,
             text: options.title,
         }
+        delete options.title
     }
 
-    return settings
+    return deepMerge(settings, options)
 }
