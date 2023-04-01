@@ -11,6 +11,7 @@ export const getOperationsFromDb = () => {
     return dbGet(DB_NAME, [])
         .map(op => {
             op.id = op.id.toString()
+            op.amount = parseFloat(op.amount)
             return op
         })
 }
@@ -67,23 +68,21 @@ export const removeOperations = (to_remove) => {
 
 export const getCreditTotal = (operations) => {
     const credit = operations.reduce((acc, op) => {
-        const amount = parseFloat(op.amount)
-        return acc + (amount >= 0 ? amount : 0)
+        return acc + (op.amount >= 0 ? op.amount : 0)
     }, 0)
     return Math.round(credit * 100) / 100
 }
 
 export const getDebitTotal = (operations) => {
     const debit = operations.reduce((acc, op) => {
-        const amount = parseFloat(op.amount)
-        return acc + (amount < 0 ? amount : 0)
+        return acc + (op.amount < 0 ? op.amount : 0)
     }, 0)
     return Math.round(debit * 100) / 100
 }
 
 export const getBalanceTotal = (operations) => {
     const balance = operations.reduce((acc, op) => {
-        return acc + parseFloat(op.amount)
+        return acc + op.amount
     }, 0)
     return Math.round(balance * 100) / 100
 }
@@ -166,7 +165,7 @@ export const exportCSV = (operations) => {
             credit: 'Credit',
         },
         ...operations.map(op => {
-            const amount = parseFloat(op.amount)
+            const amount = op.amount
             let debit = null,
                 credit = null
             if (amount < 0) {
