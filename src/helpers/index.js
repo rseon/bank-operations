@@ -22,13 +22,15 @@ export const formatDate = (date, formatDate = 'dd/MM/yyyy') => {
 }
 
 export const currency = (amount) => {
-    let formatted = amount.toString()
-        .replace('.', ',')
-        .replace(',00', '')
+    let formatted = (Math.round(amount * 100) / 100)
+        .toLocaleString()
+        .toString()
+        .replace(/(\,00)|(\.00)/, '')
 
-    if (formatted.includes(',')) {
-        const [unit, decimals] = formatted.split(',')
-        formatted = `${unit},${decimals.padEnd(2, '0')}`
+    const comma = formatted.match(/(\.)|(\,)/)
+    if (comma) {
+        const [unit, decimals] = formatted.split(comma[0])
+        formatted = `${unit}${comma[0]}${decimals.padEnd(2, '0')}`
     }
 
     return `${formatted} €`
