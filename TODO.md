@@ -11,7 +11,7 @@
 - [x] Import from CSV
 - [x] 🐛 Fix accents in imports
 - [x] Bulk delete
-- [ ] Graphs
+- [x] Graphs
 - [x] Export all
 - [x] Export only selected (bulk export)
 - [x] When rows selected, hide "Import" and "Export all" buttons
