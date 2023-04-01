@@ -91,7 +91,7 @@ const OperationFilterComponent = ({
                     </div>
                 </div>
                 <div className="row">
-                    <div className="col-4">
+                    <div className="col-3">
                         <label htmlFor="filter_type" className="form-label">Type</label>
                         <select name="type" id="filter_type" className="form-control" value={filters.type} onChange={onChange} autoComplete="off">
                             <option value=""></option>
@@ -105,7 +105,7 @@ const OperationFilterComponent = ({
                             </button>
                         }
                     </div>
-                    <div className="col-4">
+                    <div className="col-3">
                         <label htmlFor="filter_type" className="form-label">Recipient</label>
                         <select name="recipient" id="filter_recipient" className="form-control" value={filters.recipient} onChange={onChange} autoComplete="off">
                             <option value=""></option>
@@ -119,11 +119,24 @@ const OperationFilterComponent = ({
                             </button>
                         }
                     </div>
-                    <div className="col-4">
+                    <div className="col-3">
                         <label htmlFor="filter_detail" className="form-label">Detail</label>
                         <input id="filter_detail" name="detail" type="search" className="form-control" value={filters.detail} onChange={onChange} autoComplete="off" />
                         {filters.detail !== '' &&
                             <button className="btn btn-link p-0" onClick={() => updateFilter('detail', '')}>
+                                <small>Reset filter</small>
+                            </button>
+                        }
+                    </div>
+                    <div className="col-3">
+                        <label htmlFor="filter_type" className="form-label">Balance</label>
+                        <select name="balance" id="filter_balance" className="form-control" value={filters.balance} onChange={onChange} autoComplete="off">
+                            <option value="both">Both</option>
+                            <option value="credit">Credit only</option>
+                            <option value="debit">Debit only</option>
+                        </select>
+                        {filters.balance !== 'both' &&
+                            <button className="btn btn-link p-0" onClick={() => updateFilter('balance', 'both')}>
                                 <small>Reset filter</small>
                             </button>
                         }

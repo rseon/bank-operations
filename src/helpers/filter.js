@@ -11,6 +11,7 @@ export const getFiltersBase = () => {
         type: '',
         recipient: '',
         detail: '',
+        balance: 'both',
     }
 }
 
@@ -45,6 +46,14 @@ export const filterOperations = (operations, filters = {}, sortBy = []) => {
         }
         if (filters.detail && !op.detail.toLowerCase().includes(filters.detail.toLowerCase())) {
             return false
+        }
+        if (filters.balance !== 'both' && filters.balance !== '') {
+            if (filters.balance === 'credit' && op.amount < 0) {
+                return false
+            }
+            if (filters.balance === 'debit' && op.amount > 0) {
+                return false
+            }
         }
         return true
     }).sort(sortMultipleFields(sortBy))
