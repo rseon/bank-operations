@@ -73,19 +73,18 @@ export default function Graphs() {
                         )}
                         {!isEmpty(filtered) &&
                             <>
-                                <div className="mb-5">
-                                    <GraphByDate operations={filtered} />
-                                </div>
-
                                 <div className="row">
+                                    <div className="col-6 mb-5">
+                                        <GraphByBalance operations={filtered} />
+                                    </div>
+                                    <div className="col-6 mb-5">
+                                        <GraphByDate operations={filtered} />
+                                    </div>
                                     <div className="col-6 mb-5">
                                         <GraphByType operations={filtered} />
                                     </div>
                                     <div className="col-6 mb-5">
                                         <GraphByRecipient operations={filtered} />
-                                    </div>
-                                    <div className="col-6 mb-5">
-                                        <GraphByBalance operations={filtered} />
                                     </div>
                                 </div>
                             </>
