@@ -44,7 +44,7 @@ export default function GraphByDate({ operations }) {
                 },
                 title: (items) => {
                     const item = items[0]
-                    return `${item.label} (${data.count[item.label]} operations)`
+                    return `${formatDate(item.label, 'dd/MM/yyyy')} (${data.count[item.label]} operations)`
                 }
             }
         }
@@ -64,8 +64,10 @@ export default function GraphByDate({ operations }) {
 
         const dataSorted = new Map([...infos.chartData.entries()].sort())
 
+        // @todo Change axis labels (date format + currencies)
+
         setChart({
-            labels: [...dataSorted.keys()].map(v => formatDate(v, 'dd/MM/yyyy')),
+            labels: [...dataSorted.keys()],
             datasets: [{
                 label: 'Operations',
                 data: [...dataSorted.values()],
