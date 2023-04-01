@@ -57,7 +57,7 @@ export default function GraphByDate({ operations }) {
         }
 
         operations.forEach(op => {
-            const key = formatDate(op.date, 'dd/MM/yyyy')
+            const key = formatDate(op.date, 'yyyy-MM-dd')
             infos.chartData.set(key, op.amount + (infos.chartData.get(key) || 0))
             infos.count[key] = 1 + (infos.count[key] || 0)
         })
@@ -65,7 +65,7 @@ export default function GraphByDate({ operations }) {
         const dataSorted = new Map([...infos.chartData.entries()].sort())
 
         setChart({
-            labels: [...dataSorted.keys()],
+            labels: [...dataSorted.keys()].map(v => formatDate(v, 'dd/MM/yyyy')),
             datasets: [{
                 label: 'Operations',
                 data: [...dataSorted.values()],
