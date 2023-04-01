@@ -7,11 +7,18 @@ const CSV_NEWLINE_TEXT = "[_n]"
 
 export const DB_NAME = 'operations'
 
+export const getOperationsFromDb = () => {
+    return dbGet(DB_NAME, [])
+        .map(op => {
+            op.id = op.id.toString()
+            return op
+        })
+}
 
 export const getOperationData = () => {
     let types = [], recipients = [], years = []
 
-    const operations = dbGet(DB_NAME, []).map(op => {
+    const operations = getOperationsFromDb().map(op => {
         if (!types.includes(op.type)) {
             types.push(op.type)
         }
@@ -22,10 +29,6 @@ export const getOperationData = () => {
         const year = op.date.split('-')[0]
         if (!years.includes(year)) {
             years.push(year)
-        }
-
-        if (typeof op.id !== 'string') {
-            op.id = op.id.toString()
         }
         return op
     })
@@ -56,7 +59,7 @@ export const setOperationsData = (operations) => {
 }
 
 export const removeOperations = (to_remove) => {
-    const operations = dbGet(DB_NAME)
+    const operations = getOperationsFromDb()
         .filter(op => !to_remove.includes(op.id))
 
     setOperationsData(operations)
@@ -86,13 +89,13 @@ export const getBalanceTotal = (operations) => {
 }
 
 export const createOperation = (data) => {
-    let stored = dbGet(DB_NAME)
+    let stored = getOperationsFromDb()
     stored.push(data)
     setOperationsData(stored)
 }
 
 export const updateOperation = (id, data) => {
-    const operations = dbGet(DB_NAME)
+    const operations = getOperationsFromDb()
     const idx = operations.findIndex(op => op.id === id)
     if (idx !== -1) {
         operations[idx] = {
@@ -104,7 +107,7 @@ export const updateOperation = (id, data) => {
 }
 
 export const destroyOperation = (id) => {
-    let operations = dbGet(DB_NAME)
+    let operations = getOperationsFromDb()
     operations = operations.filter(op => op.id !== id)
     setOperationsData(operations)
 }
