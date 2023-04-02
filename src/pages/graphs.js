@@ -1,7 +1,7 @@
 import HeaderComponent from "@/components/HeaderComponent"
 import {getOperationData} from "@/helpers/operation";
 import GraphByRecipient from "@/components/Operation/Graph/ByRecipientComponent";
-import {useEffect, useRef, useState} from "react";
+import {useEffect, useState} from "react";
 import GraphByType from "@/components/Operation/Graph/ByTypeComponent";
 import GraphByBalance from "@/components/Operation/Graph/ByBalanceComponent";
 import GraphByDate from "@/components/Operation/Graph/ByDateComponent";
@@ -15,8 +15,6 @@ export default function Graphs() {
     const [filters, setFilters] = useState({})
     const [nbFilters, setNbFilters] = useState(0)
     const [showFilters, setShowFilters] = useState(false)
-
-    const toolbarComponent = useRef()
 
     const loadList = () => {
         setData(getOperationData())
@@ -40,64 +38,64 @@ export default function Graphs() {
         setNbFilters(Object.values(filters).filter(f => f !== '').length)
     }, [filters])
 
+    if (!data) {
+        return null
+    }
+
     return (
         <>
             <HeaderComponent data={data} loadList={loadList} />
 
             <div className="container">
-                {data &&
-                    <>
-                        <div className="mb-3">
-                            <button className="btn btn-outline-info btn-sm" onClick={() => setShowFilters(!showFilters)}>
-                                {showFilters && '🛠️ Hide filters'}
-                                {!showFilters && '🛠️ Show filters'}
-                                {nbFilters > 0 && ` (${nbFilters})`}
-                            </button>
+                <div className="mb-3">
+                    <button className="btn btn-outline-info btn-sm" onClick={() => setShowFilters(!showFilters)}>
+                        {showFilters && '🛠️ Hide filters'}
+                        {!showFilters && '🛠️ Show filters'}
+                        {nbFilters > 0 && ` (${nbFilters})`}
+                    </button>
 
-                            <span className="text-muted ms-3">
-                                {filtered.length !== data.operations.length && (
-                                    <>
-                                        <strong>{filtered.length}</strong> operations / {data.operations.length}
-                                    </>
-                                )}
-                                {filtered.length === data.operations.length && (
-                                    <>
-                                        <strong>{data.operations.length}</strong> operations
-                                    </>
-                                )}
-                            </span>
-                        </div>
-                        {!isEmpty(data.operations) && showFilters && (
-                            <FilterComponent
-                                data={data}
-                                filters={filters}
-                                setFilters={setFilters}
-                            />
-                        )}
-                        {!isEmpty(filtered) &&
+                    <span className="text-muted ms-3">
+                        {filtered.length !== data.operations.length && (
                             <>
-                                <div className="row">
-                                    <div className="col-6 mb-5">
-                                        <GraphByBalance operations={filtered} />
-                                    </div>
-                                    <div className="col-6 mb-5">
-                                        <GraphByDate operations={filtered} />
-                                    </div>
-                                    <div className="col-6 mb-5">
-                                        <GraphByType operations={filtered} />
-                                    </div>
-                                    <div className="col-6 mb-5">
-                                        <GraphByRecipient operations={filtered} />
-                                    </div>
-                                </div>
+                                <strong>{filtered.length}</strong> operations / {data.operations.length}
                             </>
-                        }
-                        {isEmpty(filtered) &&
-                            <div className="alert alert-info">
-                                No operation to display
+                        )}
+                        {filtered.length === data.operations.length && (
+                            <>
+                                <strong>{data.operations.length}</strong> operations
+                            </>
+                        )}
+                    </span>
+                </div>
+                {!isEmpty(data.operations) && showFilters && (
+                    <FilterComponent
+                        data={data}
+                        filters={filters}
+                        setFilters={setFilters}
+                    />
+                )}
+                {!isEmpty(filtered) &&
+                    <>
+                        <div className="row">
+                            <div className="col-6 mb-5">
+                                <GraphByBalance operations={filtered} />
                             </div>
-                        }
+                            <div className="col-6 mb-5">
+                                <GraphByDate operations={filtered} />
+                            </div>
+                            <div className="col-6 mb-5">
+                                <GraphByType operations={filtered} />
+                            </div>
+                            <div className="col-6 mb-5">
+                                <GraphByRecipient operations={filtered} />
+                            </div>
+                        </div>
                     </>
+                }
+                {isEmpty(filtered) &&
+                    <div className="alert alert-info">
+                        No operation to display
+                    </div>
                 }
             </div>
         </>
