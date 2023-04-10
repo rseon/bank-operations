@@ -83,6 +83,7 @@ export const deepMerge = (target, ...sources) => {
     return deepMerge(target, ...sources)
 }
 
-export const round = (value) => {
-    return Math.round(value * 100) / 100
+export const round = (value, decimals = 2) => {
+    const factor = parseInt('1' + '0'.repeat(decimals))
+    return Math.round(value * factor) / factor
 }
