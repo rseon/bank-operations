@@ -1,24 +1,20 @@
 import {deepEqual, isEmpty} from "@/helpers";
-import {forwardRef, useEffect, useImperativeHandle, useState} from "react";
+import {forwardRef, useImperativeHandle, useMemo, useState} from "react";
 import FilterComponent from "@/components/Operation/FilterComponent";
 import {setOperationsData, exportCSV, exportJson, importCSV, importJson, removeOperations} from "@/helpers/operation";
+import {useOperation} from "@/providers/operation";
 
 const OperationToolbarComponent = ({
-    data,
-    filtered,
-    filters,
-    setFilters,
-    onUpdated,
     listChecked
 }, ref) => {
 
-    const { operations } = data
-    const [nbFilters, setNbFilters] = useState(0)
+    const {operations, filtered, filters} = useOperation()
+
     const [showFilters, setShowFilters] = useState(false)
     const [forBulk, setForBulk] = useState([])
 
-    useEffect(() => {
-        setNbFilters(Object.values(filters).filter(f => f !== '').length)
+    const nbFilters = useMemo(() => {
+        return Object.values(filters).filter(f => f !== '').length
     }, [filters])
 
     const importData = () => {
@@ -235,11 +231,7 @@ const OperationToolbarComponent = ({
                 </div>
             </div>
             {!isEmpty(operations) && showFilters && (
-                <FilterComponent
-                    data={data}
-                    filters={filters}
-                    setFilters={setFilters}
-                />
+                <FilterComponent />
             )}
         </>
     )

@@ -1,35 +1,58 @@
-import HeaderComponent from "@/components/HeaderComponent"
-import ListComponent from "@/components/Operation/ListComponent"
-import {useEffect, useState} from "react"
-import {getOperationData} from "@/helpers/operation";
+import Layout from "@/pages/_layout";
+import {useRef, useState} from "react";
+import {CHECKBOX_STATES, isEmpty} from "@/helpers";
+import ModalComponent from "@/components/ModalComponent";
+import FormComponent from "@/components/Operation/FormComponent";
+import ToolbarComponent from "@/components/Operation/ToolbarComponent";
+import TableComponent from "@/components/Operation/TableComponent";
+import {useOperation} from "@/providers/operation";
 
-export default function Home() {
-    const [data, setData] = useState({
-        types: [],
-        recipients: [],
-        operations: [],
-        balance: 0,
-        years: [],
-    })
+export default function Page() {
+    const {operations, reloadList} = useOperation()
 
-    const loadList = () => {
-        setData(getOperationData)
+    const [listChecked, setListChecked] = useState([])
+
+    const formComponent = useRef()
+    const toolbarComponent = useRef()
+    const tableComponent = useRef()
+    const modalComponent = useRef()
+
+    const onUpdated = () => {
+        tableComponent.current?.setCheckboxChecked(CHECKBOX_STATES.empty)
+        toolbarComponent.current?.setForBulk([])
+        setListChecked([])
+        modalComponent.current?.close()
+        reloadList()
     }
 
-    useEffect(() => {
-        loadList()
-    }, [])
-
     return (
-        <>
-            <HeaderComponent data={data} loadList={loadList} />
+        <Layout
+            metas={{
+                title: "Operations"
+            }}
+        >
+            {!isEmpty(operations) &&
+                <ModalComponent id="editModal" title="Edit operation" ref={modalComponent}>
+                    <FormComponent
+                        ref={formComponent}
+                        method="update"
+                        onSubmitted={onUpdated}
+                    />
+                </ModalComponent>
+            }
 
-            <div className="container">
-                <ListComponent
-                    data={data}
-                    onUpdated={loadList}
-                />
-            </div>
-        </>
+            <ToolbarComponent
+                ref={toolbarComponent}
+                listChecked={listChecked}
+            />
+
+            <TableComponent
+                ref={tableComponent}
+                formComponent={formComponent}
+                toolbarComponent={toolbarComponent}
+                listChecked={listChecked}
+                setListChecked={setListChecked}
+            />
+        </Layout>
     )
 }

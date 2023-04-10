@@ -1,14 +1,25 @@
-import {forwardRef, useImperativeHandle, useState} from "react"
+import {forwardRef, useImperativeHandle, useMemo, useState} from "react"
 import {formatDate} from "@/helpers"
 import {createOperation, destroyOperation, updateOperation} from "@/helpers/operation"
+import {useOperation} from "@/providers/operation";
 
 const OperationFormComponent = ({
     method,
-    data,
     onSubmitted,
 }, ref) => {
 
-    const { types, recipients } = data
+    const {
+        operations,
+        data, reloadList,
+        filtered, setFiltered,
+        filters, setFilters,
+        sortBy, saveSortBy
+    } = useOperation()
+
+    const { types, recipients } = useMemo(() => {
+        return data
+    }, [data])
+
     const defaultValues = {
         date: formatDate(new Date(), 'yyyy-MM-dd'),
         amount: '',

@@ -1,13 +1,15 @@
 import {deepEqual, formatDate} from "@/helpers";
 import {getFiltersBase, setFiltersData} from "@/helpers/filter";
 import {useEffect, useMemo, useState} from "react";
+import {useOperation} from "@/providers/operation";
 
-const OperationFilterComponent = ({
-    data,
-    filters,
-    setFilters
-}) => {
-    const { types, recipients, years, months } = data
+const OperationFilterComponent = () => {
+    const {data, filters, setFilters} = useOperation()
+
+    const { types, recipients, years, months } = useMemo(() => {
+        return data
+    }, [data])
+
     const [isThisMonth, setIsThisMonth] = useState(false)
     const [hasFilter, setHasFilter] = useState(false)
 

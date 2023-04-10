@@ -5,12 +5,14 @@ import { Doughnut } from 'react-chartjs-2';
 import {getOptions} from "@/helpers/graph";
 import {getBalanceTotal} from "@/helpers/operation";
 import {currency} from "@/helpers";
+import {useOperation} from "@/providers/operation";
 
 ChartJS.register(ArcElement, Tooltip, Legend, Colors, Title);
 
-export default function GraphByBalance({ operations }) {
+export default function GraphByBalance() {
 
-    const [data, setData] = useState(null)
+    const {filtered: operations} = useOperation()
+    const [chartData, setChartData] = useState(null)
     const [chart, setChart] = useState(null)
     const [reload, setReload] = useState(0)
 
@@ -27,11 +29,11 @@ export default function GraphByBalance({ operations }) {
                 },
                 title: (items) => {
                     const item = items[0]
-                    return `${item.label} (${data.count[item.label]} operations)`
+                    return `${item.label} (${chartData.count[item.label]} operations)`
                 }
             }
         }
-    }, [data])
+    }, [chartData])
 
     useEffect(() => {
         const infos = {
@@ -58,7 +60,7 @@ export default function GraphByBalance({ operations }) {
                 data: Object.values(infos.chartData),
             }],
         })
-        setData(infos)
+        setChartData(infos)
         setReload(reload + 1)
     }, [operations])
 

@@ -16,6 +16,7 @@ import {
 import { Chart } from 'react-chartjs-2';
 import {getOptions} from "@/helpers/graph";
 import {currency, formatDate} from "@/helpers";
+import {useOperation} from "@/providers/operation";
 
 ChartJS.register(
     LinearScale,
@@ -30,9 +31,10 @@ ChartJS.register(
     BarController
 );
 
-export default function GraphByDate({ operations }) {
+export default function GraphByDate() {
 
-    const [data, setData] = useState(null)
+    const {filtered: operations} = useOperation()
+    const [chartData, setChartData] = useState(null)
     const [chart, setChart] = useState(null)
     const [reload, setReload] = useState(0)
 
@@ -45,11 +47,11 @@ export default function GraphByDate({ operations }) {
                 },
                 title: (items) => {
                     const item = items[0]
-                    return `${formatDate(item.label, 'dd/MM/yyyy')} (${data.count[item.label]} operations)`
+                    return `${formatDate(item.label, 'dd/MM/yyyy')} (${chartData.count[item.label]} operations)`
                 }
             }
         }
-    }, [data])
+    }, [chartData])
 
     useEffect(() => {
         const infos = {
@@ -74,7 +76,7 @@ export default function GraphByDate({ operations }) {
                 data: [...dataSorted.values()],
             }],
         })
-        setData(infos)
+        setChartData(infos)
         setReload(reload + 1)
     }, [operations])
 
@@ -92,6 +94,22 @@ export default function GraphByDate({ operations }) {
                     }
                 },
                 maintainAspectRatio: false,
+                scales: {
+                    x: {
+                        ticks: {
+                            callback: function(val, index) {
+                                return formatDate(this.getLabelForValue(val), 'dd/MM/yyyy')
+                            }
+                        }
+                    },
+                    y: {
+                        ticks: {
+                            callback: function(val, index) {
+                                return currency(val)
+                            }
+                        }
+                    }
+                }
             })}
             redraw={true}
             height="100%"

@@ -1,40 +1,35 @@
 import {CHECKBOX_STATES, currency, formatDate, isEmpty, nl2br} from "@/helpers"
 import {getBalanceTotal, getCreditTotal, getDebitTotal} from "@/helpers/operation"
-import {forwardRef, useEffect, useImperativeHandle, useRef, useState} from "react";
+import {forwardRef, useImperativeHandle, useMemo, useRef, useState} from "react";
 import SortByComponent from "@/components/Operation/SortByComponent";
+import {useOperation} from "@/providers/operation";
 
 const OperationTableComponent = ({
-    data,
-    filtered,
     formComponent,
     toolbarComponent,
-    sortBy,
-    setSortBy,
     listChecked,
     setListChecked,
 }, ref) => {
-    const { operations } = data
-    const [totals, setTotals] = useState({
-        credit: 0,
-        debit: 0,
-        balance: 0,
-    })
+    const {operations, filtered, setFiltered} = useOperation()
+
+    const totals = useMemo(() => {
+        return {
+            credit: getCreditTotal(filtered),
+            debit: getDebitTotal(filtered),
+            balance: getBalanceTotal(filtered),
+        }
+    }, [filtered])
+
+    const nbFiltered = useMemo(() => {
+        return filtered.length
+    }, [filtered])
+
     const checkboxAll = useRef()
     const [isAllChecked, setIsAllChecked] = useState(CHECKBOX_STATES.empty)
-    const [nbFiltered, setNbFiltered] = useState(0)
 
     useImperativeHandle(ref, () => ({
         setCheckboxChecked,
     }))
-
-    useEffect(() => {
-        setTotals({
-            credit: getCreditTotal(filtered),
-            debit: getDebitTotal(filtered),
-            balance: getBalanceTotal(filtered),
-        })
-        setNbFiltered(filtered.length)
-    }, [filtered])
 
     const showModalOperation = (operation = null) => {
         let modalId = '#createModal'
@@ -131,15 +126,15 @@ const OperationTableComponent = ({
                     }
                     <th width={1}>
                         Date
-                        {nbFiltered > 0 && <SortByComponent sortBy={sortBy} setSortBy={setSortBy} field="date" />}
+                        {nbFiltered > 0 && <SortByComponent field="date" />}
                     </th>
                     <th width={1}>
                         Type
-                        {nbFiltered > 0 && <SortByComponent sortBy={sortBy} setSortBy={setSortBy} field="type" />}
+                        {nbFiltered > 0 && <SortByComponent field="type" />}
                     </th>
                     <th width={1}>
                         Recipient
-                        {nbFiltered > 0 && <SortByComponent sortBy={sortBy} setSortBy={setSortBy} field="recipient" />}
+                        {nbFiltered > 0 && <SortByComponent field="recipient" />}
                     </th>
                     <th>Detail</th>
                     <th width={1}>Debit</th>

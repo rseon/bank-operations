@@ -1,7 +1,10 @@
 import {useMemo} from "react";
 import {withSortById} from "@/helpers/filter";
+import {useOperation} from "@/providers/operation";
 
-export default function OperationSortByComponent({ sortBy, setSortBy, field }) {
+export default function OperationSortByComponent({ field }) {
+
+    const { sortBy, saveSortBy } = useOperation()
 
     const fieldSorted = useMemo(() => {
         return sortBy.filter(s => s.field === field)[0]
@@ -16,7 +19,7 @@ export default function OperationSortByComponent({ sortBy, setSortBy, field }) {
 
         // Combine sorts
         if (e.ctrlKey) {
-            setSortBy((state) => {
+            saveSortBy((state) => {
                 let newSortBy = state.filter(s => s.field !== field)
                 newSortBy.push({
                     field,
@@ -26,7 +29,7 @@ export default function OperationSortByComponent({ sortBy, setSortBy, field }) {
             })
         }
         else {
-            setSortBy(withSortById([{
+            saveSortBy(withSortById([{
                 field,
                 direction
             }]))

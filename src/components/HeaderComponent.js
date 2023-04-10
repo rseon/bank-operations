@@ -1,17 +1,20 @@
 import Link from "next/link";
 import {useRouter} from "next/router";
-import FormOnlyComponent from "@/components/Operation/FormComponent";
+import FormComponent from "@/components/Operation/FormComponent";
 import ModalComponent from "@/components/ModalComponent";
 import {useRef} from "react";
+import {useOperation} from "@/providers/operation";
 
-export default function HeaderComponent({ data, loadList }) {
+export default function HeaderComponent() {
     const router = useRouter()
+
+    const {reloadList} = useOperation()
 
     const modalComponent = useRef()
 
     const formCreateSubmitted = () => {
         modalComponent.current?.close()
-        loadList()
+        reloadList()
     }
 
     return (
@@ -38,9 +41,8 @@ export default function HeaderComponent({ data, loadList }) {
             </div>
 
             <ModalComponent id="createModal" title="New operation" ref={modalComponent}>
-                <FormOnlyComponent
+                <FormComponent
                     method="create"
-                    data={data}
                     onSubmitted={formCreateSubmitted}
                 />
             </ModalComponent>
