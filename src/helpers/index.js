@@ -1,4 +1,4 @@
-import {parseJSON, format} from 'date-fns'
+import {parseJSON, format, parse} from 'date-fns'
 
 export const CHECKBOX_STATES = {
     checked: 'Checked',
@@ -6,13 +6,36 @@ export const CHECKBOX_STATES = {
     empty: 'Empty',
 }
 
-export const formatDate = (date, formatDate = 'dd/MM/yyyy') => {
-    if (!date) return null
+export const formatDate = (date, formatDate = 'dd/MM/yyyy', throwError = false) => {
+    if (!date) {
+        return null
+    }
+
     const dateParsed = parseJSON(new Date(date))
-    return format(dateParsed, formatDate)
+
+    try {
+        return format(dateParsed, formatDate)
+    } catch (e) {
+        if (throwError) {
+            throw e
+        }
+    }
+    return null
 }
 
-export const currency = (amount) => {
+export const formatDateFromFormat = (date, formatFrom, formatTo = 'yyyy-MM-dd', throwError = false) => {
+    const dateParsed = parse(date, formatFrom, new Date())
+    try {
+        return format(dateParsed, formatTo)
+    } catch (e) {
+        if (throwError) {
+            throw e
+        }
+    }
+    return null
+}
+
+export const currency = (amount, throwError = false) => {
     let formatted = round(amount)
         .toLocaleString()
         .toString()
@@ -24,13 +47,23 @@ export const currency = (amount) => {
         formatted = `${unit}${comma[0]}${decimals.padEnd(2, '0')}`
     }
 
+    if (formatted === "NaN") {
+        if (throwError) {
+            throw new Error(`Amount is NaN`)
+        }
+        return amount
+    }
+
     return `${formatted} €`
 }
 
 export const isEmpty = (array) => array.length === 0
 
-export const nl2br = (str) => {
+export const nl2br = (str, throwError = false) => {
     if (typeof str === 'undefined' || str === null) {
+        if (throwError) {
+            throw new Error(`String cannot be ${str}`)
+        }
         return ''
     }
     return (str + '').replace(/([^>\r\n]?)(\r\n|\n\r|\r|\n)/g, '$1<br />$2')
