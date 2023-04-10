@@ -1,0 +1,7 @@
+@import 'bootstrap/dist/css/bootstrap.css';
+
+#__next {
+	display: flex !important;
+	flex-direction: column !important;
+	height: 100% !important;
+}

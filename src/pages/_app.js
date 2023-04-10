@@ -1,4 +1,4 @@
-import 'bootstrap/dist/css/bootstrap.css'
+import '@/styles/globals.css'
 import {useEffect} from "react";
 import {provider, ProviderComposer} from "@/providers/providerComposer";
 import OperationProvider from "@/providers/operation";
