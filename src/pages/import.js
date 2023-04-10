@@ -60,7 +60,7 @@ export default function Page() {
 
             return op
         })
-    }, [operationsToImport, setContentErrors])
+    }, [operationsToImport, setContentErrors, configuration])
 
     const errors = useMemo(() => {
         return [...contentErrors.values()]
@@ -83,7 +83,6 @@ export default function Page() {
 
         const reader = new FileReader();
         reader.onload = (e) => {
-            let result
             switch (getTypeByMime(file.type)) {
                 case 'CSV':
                     setConfigure(true)
