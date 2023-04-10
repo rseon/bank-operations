@@ -21,10 +21,10 @@ export default function HeaderComponent() {
         <>
             <div className="container">
                 <header className="d-flex flex-wrap align-items-center justify-content-center justify-content-md-between py-3 mb-4 border-bottom">
-                    <span className="d-flex align-items-center col-md-3 mb-2 mb-md-0 text-dark text-decoration-none fs-4">
+                    <span className="d-flex align-items-center mb-2 mb-md-0 text-dark text-decoration-none fs-4">
                         🏦 Bank operations
                     </span>
-                    <ul className="nav col-12 col-md-auto mb-2 justify-content-center mb-md-0">
+                    <ul className="nav mb-2 mb-md-0">
                         <li>
                             <Link href="/" className={`nav-link px-2 ${router.pathname === '/' ? 'link-primary' : 'link-secondary'}`}>Operations</Link>
                         </li>
@@ -32,7 +32,10 @@ export default function HeaderComponent() {
                             <Link href="/graphs" className={`nav-link px-2 ${router.pathname === '/graphs' ? 'link-primary' : 'link-secondary'}`}>Graphs</Link>
                         </li>
                     </ul>
-                    <div className="col-md-3 text-end">
+                    <div className="text-end">
+                        <Link href="/import" className={`btn ${router.pathname === '/import' ? 'btn-info' : 'btn-outline-info'} me-3`}>
+                            📂 Import data
+                        </Link>
                         <button className="btn btn-outline-primary" data-bs-toggle="modal" data-bs-target="#createModal">
                             ➕ New operation
                         </button>

@@ -6,15 +6,6 @@ export const CHECKBOX_STATES = {
     empty: 'Empty',
 }
 
-export const downloadFile = (content, filename) => {
-    const link = document.createElement("a")
-    link.setAttribute("href", content)
-    link.setAttribute("download", filename)
-    document.body.appendChild(link)
-
-    link.click()
-}
-
 export const formatDate = (date, formatDate = 'dd/MM/yyyy') => {
     if (!date) return null
     const dateParsed = parseJSON(new Date(date))

@@ -3,6 +3,7 @@ import {getBalanceTotal, getCreditTotal, getDebitTotal} from "@/helpers/operatio
 import {forwardRef, useImperativeHandle, useMemo, useRef, useState} from "react";
 import SortByComponent from "@/components/Operation/SortByComponent";
 import {useOperation} from "@/providers/operation";
+import Link from "next/link";
 
 const OperationTableComponent = ({
     formComponent,
@@ -41,10 +42,6 @@ const OperationTableComponent = ({
         const { Modal } = require("bootstrap")
         const myModal = new Modal(modalId)
         myModal.show()
-    }
-
-    const importData = () => {
-        toolbarComponent.current?.importData()
     }
 
     const setCheckboxChecked = (type) => {
@@ -116,7 +113,7 @@ const OperationTableComponent = ({
     }
 
     return (
-        <table className="table table-striped table-hover">
+        <table className="table table-striped table-hover table-sticky-header">
             <thead className="table-light">
                 <tr>
                     {nbFiltered > 1 &&
@@ -164,9 +161,9 @@ const OperationTableComponent = ({
                                     ➕ Create first operation
                                 </button>
                                 - or -
-                                <button className="btn btn-outline-info btn-sm mb-3 ms-4" onClick={importData}>
-                                    ⬆️ Import your data
-                                </button>
+                                <Link href="/import" className="btn btn-outline-info btn-sm mb-3 ms-4">
+                                    📂 Import your data
+                                </Link>
                             </div>
 
                         </td>
