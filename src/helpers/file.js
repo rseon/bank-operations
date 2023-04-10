@@ -8,6 +8,7 @@ const CSV_NEWLINE_TEXT = "[_n]"
 const TYPE_BY_MIME = {
     'application/json': "JSON",
     'text/csv': "CSV",
+    'application/vnd.ms-excel': "CSV",
 }
 
 const downloadFile = (content, filename) => {

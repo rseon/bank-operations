@@ -31,7 +31,6 @@ export default function Page() {
                 delete opCopy.id
                 delete opCopy.exists
                 rowCopy.amount = parseFloat(rowCopy.amount)
-                console.log(opCopy, rowCopy)
                 return deepEqual(opCopy, rowCopy)
             })
             return row
@@ -169,8 +168,8 @@ export default function Page() {
                         <strong>Note:</strong> rows in green already exists and will not be imported
                     </div>
 
-                    <div className="table-responsive table-responsive-height">
-                        <table className="table table-hover table-sticky-header">
+                    <div className="table-responsive table-responsive-height mb-3">
+                        <table className="table table-hover table-sticky-header mb-0">
                             <thead className="table-light">
                                 <tr>
                                     <th width={1}>Date</th>
