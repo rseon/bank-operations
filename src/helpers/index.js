@@ -22,7 +22,7 @@ export const formatDate = (date, formatDate = 'dd/MM/yyyy') => {
 }
 
 export const currency = (amount) => {
-    let formatted = (Math.round(amount * 100) / 100)
+    let formatted = round(amount)
         .toLocaleString()
         .toString()
         .replace(/(\,00)|(\.00)/, '')
@@ -81,4 +81,8 @@ export const deepMerge = (target, ...sources) => {
     }
 
     return deepMerge(target, ...sources)
+}
+
+export const round = (value) => {
+    return Math.round(value * 100) / 100
 }

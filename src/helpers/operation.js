@@ -1,4 +1,4 @@
-import {dbGet, dbSave, downloadFile, formatDate} from "@/helpers/index"
+import {dbGet, dbSave, round} from "@/helpers/index"
 const version = require('../../package.json').version
 
 const CSV_SEPARATOR = ';'
@@ -67,24 +67,21 @@ export const removeOperations = (to_remove) => {
 }
 
 export const getCreditTotal = (operations) => {
-    const credit = operations.reduce((acc, op) => {
+    return round(operations.reduce((acc, op) => {
         return acc + (op.amount >= 0 ? op.amount : 0)
-    }, 0)
-    return Math.round(credit * 100) / 100
+    }, 0))
 }
 
 export const getDebitTotal = (operations) => {
-    const debit = operations.reduce((acc, op) => {
+    return round(operations.reduce((acc, op) => {
         return acc + (op.amount < 0 ? op.amount : 0)
-    }, 0)
-    return Math.round(debit * 100) / 100
+    }, 0))
 }
 
 export const getBalanceTotal = (operations) => {
-    const balance = operations.reduce((acc, op) => {
+    return round(operations.reduce((acc, op) => {
         return acc + op.amount
-    }, 0)
-    return Math.round(balance * 100) / 100
+    }, 0))
 }
 
 export const createOperation = (data) => {
