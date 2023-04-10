@@ -5,7 +5,8 @@ import {setOperationsData, exportCSV, exportJson, importCSV, importJson, removeO
 import {useOperation} from "@/providers/operation";
 
 const OperationToolbarComponent = ({
-    listChecked
+    listChecked,
+    onUpdated
 }, ref) => {
 
     const {operations, filtered, filters} = useOperation()

@@ -44,6 +44,7 @@ export default function Page() {
             <ToolbarComponent
                 ref={toolbarComponent}
                 listChecked={listChecked}
+                onUpdated={onUpdated}
             />
 
             <TableComponent
