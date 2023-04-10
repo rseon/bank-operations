@@ -1,4 +1,4 @@
-import {formatDate, round} from "@/helpers/index";
+import {formatDate, formatDateFromFormat, round} from "@/helpers/index";
 const version = require('../../package.json').version
 
 const CSV_SEPARATOR = ';'
@@ -20,52 +20,29 @@ const downloadFile = (content, filename) => {
     link.click()
 }
 
-export const importCsv = (content) => {
-    const rows = content.split(CSV_NEWLINE)
-    rows.shift()
-
-    const idxPrefix = Date.now()
-    return rows
-        .filter(r => r.trim().length > 0)
-        .map((r, idx) => {
-            let [
-                date,
-                type,
-                recipient,
-                detail,
-                debit,
-                credit
-            ] = r.split(CSV_SEPARATOR).map(c => {
-                try {
-                    return decodeURIComponent(escape(c))
-                } catch (e) {
-                    return c
-                }
-            })
-
-            credit = credit.replace('\r', '')
-                .replace(',', '.')
-                .replace('.00', '')
-
-            debit = debit.replace(',', '.')
-                .replace('.00', '')
-
-            const amount = credit !== '' ? credit : debit
-
-            return {
-                id: `${idxPrefix}${idx}`,
-                date,
-                type,
-                recipient,
-                detail: detail.replace(CSV_NEWLINE_TEXT, CSV_NEWLINE),
-                amount,
-            }
-        })
+export const getBaseConfigForCsvFormat = () => {
+    return {
+        skip: 1,
+        delimiter: ";",
+        dateFormat: 'yyyy-MM-dd',
+        newLine: CSV_NEWLINE
+    }
 }
 
-export const formatCsv = (content) => {
-    const rows = content.split(CSV_NEWLINE)
-    rows.shift()
+export const formatCsv = (content, options = {}) => {
+    const config = {
+        ...getBaseConfigForCsvFormat(),
+        ...options
+    }
+
+    const rows = content.split(config.newLine)
+
+    // Skip
+    let skip = config.skip
+    while(skip >= 0) {
+        rows.shift()
+        --skip
+    }
 
     const idxPrefix = Date.now()
     return rows
@@ -78,7 +55,7 @@ export const formatCsv = (content) => {
                 detail,
                 debit,
                 credit
-            ] = r.split(CSV_SEPARATOR).map(c => {
+            ] = r.split(config.delimiter).map(c => {
                 try {
                     return decodeURIComponent(escape(c))
                 } catch (e) {
@@ -97,10 +74,10 @@ export const formatCsv = (content) => {
 
             return {
                 id: `${idxPrefix}${idx}`,
-                date,
+                date: formatDateFromFormat(date, config.dateFormat),
                 type,
                 recipient,
-                detail: detail.replace(CSV_NEWLINE_TEXT, CSV_NEWLINE),
+                detail: detail.replace(CSV_NEWLINE_TEXT, config.newLine),
                 amount,
             }
         })
