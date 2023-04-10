@@ -11,7 +11,7 @@
 - [x] Import from CSV
 - [x] 🐛 Fix accents in imports
 - [x] Bulk delete
-- [ ] Graphs
+- [x] Graphs
 - [x] Export all
 - [x] Export only selected (bulk export)
 - [x] When rows selected, hide "Import" and "Export all" buttons
@@ -21,6 +21,7 @@
 - [x] Merge system for imports (does not delete all data but avoid duplication)
 - [x] Combine sorts (with Ctrl + Click on column)
 - [ ] Replace Object by Map (?)
+- [ ] Refacto graph components (avoid code duplicate)
 
 ## UI
 - [ ] Use [react-bootstrap](https://react-bootstrap.github.io/)

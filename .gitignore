@@ -34,3 +34,4 @@ yarn-error.log*
 bak*
 .env
 .idea
+/analyze

@@ -1,17 +1,25 @@
-import ModalComponent from "@/components/ModalComponent"
-import {forwardRef, useImperativeHandle, useState} from "react"
+import {forwardRef, useImperativeHandle, useMemo, useState} from "react"
 import {formatDate} from "@/helpers"
 import {createOperation, destroyOperation, updateOperation} from "@/helpers/operation"
+import {useOperation} from "@/providers/operation";
 
 const OperationFormComponent = ({
-    modalId,
-    modalTitle,
     method,
-    data,
     onSubmitted,
 }, ref) => {
 
-    const { types, recipients } = data
+    const {
+        operations,
+        data, reloadList,
+        filtered, setFiltered,
+        filters, setFilters,
+        sortBy, saveSortBy
+    } = useOperation()
+
+    const { types, recipients } = useMemo(() => {
+        return data
+    }, [data])
+
     const defaultValues = {
         date: formatDate(new Date(), 'yyyy-MM-dd'),
         amount: '',
@@ -55,10 +63,6 @@ const OperationFormComponent = ({
         myToast.show()
     }
 
-    const hideModal = () => {
-        document.getElementById(modalId).querySelector('.btn-close').click()
-    }
-
     const handleSubmit = async (event) => {
         setLoading(true)
         event.preventDefault()
@@ -99,7 +103,6 @@ const OperationFormComponent = ({
         }
 
         showToast()
-        hideModal()
         setLoading(false)
         setFormData(defaultValues)
         onSubmitted()
@@ -112,7 +115,6 @@ const OperationFormComponent = ({
             destroyOperation(formData.id)
 
             showToast()
-            hideModal()
             setLoading(false)
             setFormData(defaultValues)
             onSubmitted()
@@ -120,7 +122,7 @@ const OperationFormComponent = ({
     }
 
     return (
-        <ModalComponent id={modalId} title={modalTitle}>
+        <>
             <form onSubmit={handleSubmit}>
                 <div className="row">
                     <div className="col-6">
@@ -173,7 +175,7 @@ const OperationFormComponent = ({
                 <button type="submit" className="btn btn-outline-primary btn-lg d-flex w-100 justify-content-center align-items-center" disabled={loading}>
                     {loading && <span className="spinner-border spinner-border-sm me-2" /> }
                     {!loading && <span className="me-2">💾</span> }
-                     Save operation
+                    Save operation
                 </button>
             </form>
 
@@ -182,7 +184,7 @@ const OperationFormComponent = ({
                     🗑️ Delete
                 </button>
             }
-        </ModalComponent>
+        </>
     )
 }
 

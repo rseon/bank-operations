@@ -6,15 +6,6 @@ export const CHECKBOX_STATES = {
     empty: 'Empty',
 }
 
-export const downloadFile = (content, filename) => {
-    const link = document.createElement("a")
-    link.setAttribute("href", content)
-    link.setAttribute("download", filename)
-    document.body.appendChild(link)
-
-    link.click()
-}
-
 export const formatDate = (date, formatDate = 'dd/MM/yyyy') => {
     if (!date) return null
     const dateParsed = parseJSON(new Date(date))
@@ -22,7 +13,7 @@ export const formatDate = (date, formatDate = 'dd/MM/yyyy') => {
 }
 
 export const currency = (amount) => {
-    let formatted = (Math.round(amount * 100) / 100)
+    let formatted = round(amount)
         .toLocaleString()
         .toString()
         .replace(/(\,00)|(\.00)/, '')
@@ -81,4 +72,9 @@ export const deepMerge = (target, ...sources) => {
     }
 
     return deepMerge(target, ...sources)
+}
+
+export const round = (value, decimals = 2) => {
+    const factor = parseInt('1' + '0'.repeat(decimals))
+    return Math.round(value * factor) / factor
 }

@@ -1,15 +1,18 @@
+/* eslint-disable react-hooks/exhaustive-deps */
 import {useEffect, useMemo, useState} from "react";
 import { Chart as ChartJS, ArcElement, Tooltip, Legend, Colors, Title } from 'chart.js';
 import { Doughnut } from 'react-chartjs-2';
 import {getOptions} from "@/helpers/graph";
 import {currency} from "@/helpers";
 import autocolors from 'chartjs-plugin-autocolors';
+import {useOperation} from "@/providers/operation";
 
 ChartJS.register(ArcElement, Tooltip, Legend, Colors, Title, autocolors);
 
-export default function GraphByRecipient({ operations }) {
+export default function GraphByRecipient() {
 
-    const [data, setData] = useState(null)
+    const {filtered: operations} = useOperation()
+    const [chartData, setChartData] = useState(null)
     const [chart, setChart] = useState(null)
     const [reload, setReload] = useState(0)
 
@@ -22,11 +25,11 @@ export default function GraphByRecipient({ operations }) {
                 },
                 title: (items) => {
                     const item = items[0]
-                    return `${item.label} (${data.count[item.label]} operations)`
+                    return `${item.label} (${chartData.count[item.label]} operations)`
                 }
             }
         }
-    }, [data])
+    }, [chartData])
 
     useEffect(() => {
         const infos = {
@@ -48,7 +51,7 @@ export default function GraphByRecipient({ operations }) {
                 data: [...dataSorted.values()],
             }],
         })
-        setData(infos)
+        setChartData(infos)
         setReload(reload + 1)
     }, [operations])
 
