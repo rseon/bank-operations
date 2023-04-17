@@ -25,6 +25,7 @@ export default function Layout({ children, metas }) {
             <Head>
                 <title>{metaTitle}</title>
                 <meta name="viewport" content="width=device-width, initial-scale=1" />
+                <meta name="description" content="A small application to manage banking operations" />
                 <link rel="icon" href="/favicon.ico" />
             </Head>
             <main className="flex-shrink-0">
