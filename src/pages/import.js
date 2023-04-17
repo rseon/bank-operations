@@ -1,10 +1,11 @@
 import Layout from "@/pages/_layout";
 import {fileIsCsv, fileIsJson, formatCsv, formatJson, getBaseConfigForCsvFormat, getHumanReadableSize, getTypeByMime} from "@/helpers/file";
 import {useMemo, useState} from "react";
-import {currency, deepEqual, formatDate, formatDateFromFormat, isEmpty, nl2br} from "@/helpers";
+import {currency, deepEqual, formatDate, formatDateFromFormat, isEmpty} from "@/helpers";
 import {useOperation} from "@/providers/operation";
 import {useRouter} from "next/router";
 import {setOperationsData} from "@/helpers/operation";
+import parseMarkdown from "@/helpers/markdown";
 
 export default function Page() {
 
@@ -51,7 +52,6 @@ export default function Page() {
                 formatDateFromFormat(op.date, configuration.dateFormat, 'dd/MM/yyyy', true)
                 formatDate(op.date, 'dd/MM/yyyy', true)
                 currency(op.amount, true)
-                nl2br(op.detail, true)
             } catch (e) {
                 setContentErrors(state => {
                     return new Set(state.add(`${e.constructor.name} : ${e.message}`))
@@ -306,7 +306,7 @@ export default function Page() {
                                                 <td className="text-nowrap">
                                                     {op.recipient}
                                                 </td>
-                                                <td className="text-nowrap" dangerouslySetInnerHTML={{ __html: nl2br(op.detail) }} />
+                                                <td className="text-nowrap" dangerouslySetInnerHTML={{ __html: parseMarkdown(op.detail) }} />
                                                 <td className="text-nowrap text-end">
                                                     {currency(op.amount)}
                                                 </td>

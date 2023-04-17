@@ -1,9 +1,10 @@
-import {CHECKBOX_STATES, currency, formatDate, isEmpty, nl2br} from "@/helpers"
+import {CHECKBOX_STATES, currency, formatDate, isEmpty} from "@/helpers"
 import {getBalanceTotal, getCreditTotal, getDebitTotal} from "@/helpers/operation"
 import {forwardRef, useImperativeHandle, useMemo, useRef, useState} from "react";
 import SortByComponent from "@/components/Operation/SortByComponent";
 import {useOperation} from "@/providers/operation";
 import Link from "next/link";
+import parseMarkdown from "@/helpers/markdown";
 
 const OperationTableComponent = ({
     formComponent,
@@ -192,7 +193,7 @@ const OperationTableComponent = ({
                         <td className="text-nowrap">
                             {op.recipient}
                         </td>
-                        <td className="text-nowrap" dangerouslySetInnerHTML={{ __html: nl2br(op.detail) }} />
+                        <td className="text-nowrap" dangerouslySetInnerHTML={{ __html: parseMarkdown(op.detail) }} />
                         <td className="text-nowrap text-end">
                             {op.amount < 0 && (
                                 <strong className="text-danger">

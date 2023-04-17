@@ -59,17 +59,6 @@ export const currency = (amount, throwError = false) => {
 
 export const isEmpty = (array) => array.length === 0
 
-export const nl2br = (str, throwError = false) => {
-    if (typeof str === 'undefined' || str === null) {
-        if (throwError) {
-            throw new Error(`String cannot be ${str}`)
-        }
-        return ''
-    }
-    return (str + '').replace(/([^>\r\n]?)(\r\n|\n\r|\r|\n)/g, '$1<br />$2')
-}
-
-
 export const dbGet = (item, defaultValue = null) => {
     return JSON.parse(localStorage.getItem(item) || JSON.stringify(defaultValue))
 }
