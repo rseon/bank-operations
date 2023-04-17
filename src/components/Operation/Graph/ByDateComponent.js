@@ -67,8 +67,6 @@ export default function GraphByDate() {
 
         const dataSorted = new Map([...infos.chartData.entries()].sort())
 
-        // @todo Change axis labels (date format + currencies)
-
         setChart({
             labels: [...dataSorted.keys()],
             datasets: [{
