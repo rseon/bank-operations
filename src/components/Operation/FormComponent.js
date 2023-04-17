@@ -31,6 +31,7 @@ const OperationFormComponent = ({
     const [loading, setLoading] = useState(false)
     const [formData, setFormData] = useState(defaultValues)
     const [isUpdate, setIsUpdate] = useState(false)
+    const [showMdHelp, setShowMdHelp] = useState(false)
 
     const setOperation = (operation) => {
         setIsUpdate(true)
@@ -121,6 +122,26 @@ const OperationFormComponent = ({
         }
     }
 
+    const insertMarkdown = (tag) => {
+        let value = formData.detail
+        switch (tag) {
+            case 'b': value += '**bold**'; break
+            case 'i': value += '*italic*'; break
+            case 'd': value += '~~italic~~'; break
+            case 'a': value += '[link title](https://example.com)'; break
+        }
+
+        if (tag.startsWith('h')) {
+            const level = tag.split('')[1]
+            value +=`\n${'#'.repeat(level)} Title ${level}`
+        }
+
+        setFormData(state => ({
+            ...state,
+            detail: value
+        }))
+    }
+
     return (
         <>
             <form onSubmit={handleSubmit}>
@@ -129,6 +150,7 @@ const OperationFormComponent = ({
                         <div className="mb-3">
                             <label htmlFor="date" className="form-label">Date</label>
                             <input id="date" name="date" type="date" value={formData.date} className="form-control" required disabled={loading} onChange={updateField} autoComplete="off" />
+                            <span className="form-text">Date of the operation</span>
                         </div>
                     </div>
                     <div className="col-6">
@@ -138,6 +160,7 @@ const OperationFormComponent = ({
                                 <input id="amount" name="amount" type="number" value={formData.amount} step="0.01" pattern="d+(.d{2})" className="form-control" required disabled={loading} onChange={updateField} autoComplete="off" />
                                 <span className="input-group-text">€</span>
                             </div>
+                            <span className="form-text">Amount of the operation. Can be negative using <code>-</code></span>
                         </div>
                     </div>
                 </div>
@@ -152,6 +175,7 @@ const OperationFormComponent = ({
                                     <option key={idx} value={type} />
                                 ))}
                             </datalist>
+                            <span className="form-text">Example: <em>Credit card</em>, <em>Bank transfer</em>...</span>
                         </div>
                     </div>
                     <div className="col-6">
@@ -163,13 +187,62 @@ const OperationFormComponent = ({
                                     <option key={idx} value={recipient} />
                                 ))}
                             </datalist>
+                            <span className="form-text">Example: <em>Insurance</em>, <em>Phone subscription</em>...</span>
                         </div>
                     </div>
                 </div>
 
                 <div className="mb-3">
                     <label htmlFor="detail" className="form-label">Description</label>
-                    <textarea id="detail" name="detail" value={formData.detail} className="form-control" disabled={loading} onChange={updateField} autoComplete="off" />
+                    <div className="btn-group ms-4">
+                        <button type="button" className="btn btn-sm btn-outline-secondary" onClick={() => insertMarkdown('b')}><strong>B</strong></button>
+                        <button type="button" className="btn btn-sm btn-outline-secondary" onClick={() => insertMarkdown('i')}><em>I</em></button>
+                        <button type="button" className="btn btn-sm btn-outline-secondary" onClick={() => insertMarkdown('d')}><del>S</del></button>
+                        <button type="button" className="btn btn-sm btn-outline-secondary" onClick={() => insertMarkdown('a')}>Link</button>
+                        <button type="button" className="btn btn-sm btn-outline-secondary dropdown-toggle" data-bs-toggle="dropdown">Title</button>
+                        <ul className="dropdown-menu">
+                            <li><button type="button" className="dropdown-item h1" onClick={() => insertMarkdown('h1')}>H1</button></li>
+                            <li><button type="button" className="dropdown-item h2" onClick={() => insertMarkdown('h2')}>H2</button></li>
+                            <li><button type="button" className="dropdown-item h3" onClick={() => insertMarkdown('h3')}>H3</button></li>
+                            <li><button type="button" className="dropdown-item h4" onClick={() => insertMarkdown('h4')}>H4</button></li>
+                            <li><button type="button" className="dropdown-item h5" onClick={() => insertMarkdown('h5')}>H5</button></li>
+                            <li><button type="button" className="dropdown-item h6" onClick={() => insertMarkdown('h6')}>H6</button></li>
+                        </ul>
+                    </div>
+                    <textarea id="detail" name="detail" value={formData.detail} className="form-control" disabled={loading} onChange={updateField} autoComplete="off" rows={5} />
+                    <button type="button" className="btn p-0 form-text text-decoration-underline" onClick={() => setShowMdHelp(!showMdHelp)}>
+                        {showMdHelp && 'Hide markdown formats'}
+                        {!showMdHelp && 'Show markdown formats'}
+                    </button>
+                    {showMdHelp && (
+                        <>
+                            <table className="table table-sm table-borderless form-text">
+                                <tbody>
+                                    <tr>
+                                        <td width={1} className="text-nowrap"><strong>Bold</strong></td>
+                                        <td><code>__bold__</code> or <code>**bold**</code></td>
+                                    </tr>
+                                    <tr>
+                                        <td className="text-nowrap"><em>Italic</em></td>
+                                        <td><code>__italic__</code> or <code>*italic*</code></td>
+                                    </tr>
+                                    <tr>
+                                        <td className="text-nowrap"><del>Strike</del></td>
+                                        <td><code>~~strike~~</code></td>
+                                    </tr>
+                                    <tr>
+                                        <td className="text-nowrap"><a href="https://example.com" onClick={(e) => e.preventDefault()}>Link</a></td>
+                                        <td><code>[link title](https://example.com)</code></td>
+                                    </tr>
+                                    <tr>
+                                        <td className="text-nowrap text-end">Title (h1 to h6)</td>
+                                        <td><code># h1</code> to <code>###### h6</code></td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </>
+
+                    )}
                 </div>
 
                 <button type="submit" className="btn btn-outline-primary btn-lg d-flex w-100 justify-content-center align-items-center" disabled={loading}>

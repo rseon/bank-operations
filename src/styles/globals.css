@@ -1,5 +1,8 @@
 @import 'bootstrap/dist/css/bootstrap.css';
 
+.form-text { font-size: 0.725em; color: var(--bs-gray-500); }
+code { font-size: 1em; }
+
 #__next {
 	display: flex !important;
 	flex-direction: column !important;
