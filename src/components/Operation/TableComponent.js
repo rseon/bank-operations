@@ -122,17 +122,17 @@ const OperationTableComponent = ({
                             <input ref={checkboxAll} value="*" type="checkbox" className="form-check-input" onChange={handleCheckbox} />
                         </th>
                     }
-                    <th width={1}>
+                    <th width={1} className="text-nowrap">
                         Date
-                        {nbFiltered > 0 && <SortByComponent field="date" />}
+                        {nbFiltered > 1 && <SortByComponent field="date" />}
                     </th>
-                    <th width={1}>
+                    <th width={1} className="text-nowrap">
                         Type
-                        {nbFiltered > 0 && <SortByComponent field="type" />}
+                        {nbFiltered > 1 && <SortByComponent field="type" />}
                     </th>
-                    <th width={1}>
+                    <th width={1} className="text-nowrap">
                         Recipient
-                        {nbFiltered > 0 && <SortByComponent field="recipient" />}
+                        {nbFiltered > 1 && <SortByComponent field="recipient" />}
                     </th>
                     <th>Detail</th>
                     <th width={1}>Debit</th>
