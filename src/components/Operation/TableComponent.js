@@ -1,9 +1,10 @@
-import {CHECKBOX_STATES, currency, formatDate, isEmpty, nl2br} from "@/helpers"
+import {CHECKBOX_STATES, currency, formatDate, isEmpty} from "@/helpers"
 import {getBalanceTotal, getCreditTotal, getDebitTotal} from "@/helpers/operation"
 import {forwardRef, useImperativeHandle, useMemo, useRef, useState} from "react";
 import SortByComponent from "@/components/Operation/SortByComponent";
 import {useOperation} from "@/providers/operation";
 import Link from "next/link";
+import {parseMarkdown} from "@/helpers/markdown";
 
 const OperationTableComponent = ({
     formComponent,
@@ -121,17 +122,17 @@ const OperationTableComponent = ({
                             <input ref={checkboxAll} value="*" type="checkbox" className="form-check-input" onChange={handleCheckbox} />
                         </th>
                     }
-                    <th width={1}>
+                    <th width={1} className="text-nowrap">
                         Date
-                        {nbFiltered > 0 && <SortByComponent field="date" />}
+                        {nbFiltered > 1 && <SortByComponent field="date" />}
                     </th>
-                    <th width={1}>
+                    <th width={1} className="text-nowrap">
                         Type
-                        {nbFiltered > 0 && <SortByComponent field="type" />}
+                        {nbFiltered > 1 && <SortByComponent field="type" />}
                     </th>
-                    <th width={1}>
+                    <th width={1} className="text-nowrap">
                         Recipient
-                        {nbFiltered > 0 && <SortByComponent field="recipient" />}
+                        {nbFiltered > 1 && <SortByComponent field="recipient" />}
                     </th>
                     <th>Detail</th>
                     <th width={1}>Debit</th>
@@ -192,7 +193,7 @@ const OperationTableComponent = ({
                         <td className="text-nowrap">
                             {op.recipient}
                         </td>
-                        <td className="text-nowrap" dangerouslySetInnerHTML={{ __html: nl2br(op.detail) }} />
+                        <td className="text-nowrap" dangerouslySetInnerHTML={{ __html: parseMarkdown(op.detail) }} />
                         <td className="text-nowrap text-end">
                             {op.amount < 0 && (
                                 <strong className="text-danger">

@@ -23,28 +23,32 @@ export default function Page() {
                 title: "Graphs"
             }}
         >
-            <div className="mb-3">
-                <button className="btn btn-outline-info btn-sm" onClick={() => setShowFilters(!showFilters)}>
-                    {showFilters && '🛠️ Hide filters'}
-                    {!showFilters && '🛠️ Show filters'}
-                    {nbFilters > 0 && ` (${nbFilters})`}
-                </button>
+            {!isEmpty(operations) && (
+                <>
+                    <div className="mb-3">
+                        <button className="btn btn-outline-info btn-sm" onClick={() => setShowFilters(!showFilters)}>
+                            {showFilters && '🛠️ Hide filters'}
+                            {!showFilters && '🛠️ Show filters'}
+                            {nbFilters > 0 && ` (${nbFilters})`}
+                        </button>
 
-                <span className="text-muted ms-3">
-                    {filtered.length !== operations.length && (
-                        <>
-                            <strong>{filtered.length}</strong> operations / {operations.length}
-                        </>
+                        <span className="text-muted ms-3">
+                            {filtered.length !== operations.length && (
+                                <>
+                                    <strong>{filtered.length}</strong> operations / {operations.length}
+                                </>
+                            )}
+                            {filtered.length === operations.length && (
+                                <>
+                                    <strong>{operations.length}</strong> operations
+                                </>
+                            )}
+                        </span>
+                    </div>
+                    {showFilters && (
+                        <FilterComponent />
                     )}
-                    {filtered.length === operations.length && (
-                        <>
-                            <strong>{operations.length}</strong> operations
-                        </>
-                    )}
-                </span>
-            </div>
-            {!isEmpty(operations) && showFilters && (
-                <FilterComponent />
+                </>
             )}
             {!isEmpty(filtered) &&
                 <>
