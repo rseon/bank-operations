@@ -63,7 +63,7 @@ export const setMarkdownInputValue = (tag, input) => {
             case 'strike': markerStart = '~~'; break
             case 'link':
                 markerStart = '['
-                markerEnd = '](https://example.com)'
+                markerEnd = '](https://example.com "Link title")'
                 break
         }
 
