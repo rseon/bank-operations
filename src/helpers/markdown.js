@@ -45,6 +45,7 @@ export const setMarkdownInputValue = (tag, input) => {
     let value = input.value
     let start = input.selectionStart
     let end = input.selectionEnd + (markerStart.length)
+    let updateValue = true
 
     // Title added on new line at the end
     if (tag.startsWith('h')) {
@@ -66,10 +67,11 @@ export const setMarkdownInputValue = (tag, input) => {
                 break
         }
 
-        markerStart = markerStart.split('')
         if (!markerEnd) {
             markerEnd = markerStart
         }
+        markerStart = markerStart.split('')
+        markerEnd = markerEnd.split('')
 
         end = input.selectionEnd + (markerStart.length)
 
@@ -82,10 +84,18 @@ export const setMarkdownInputValue = (tag, input) => {
             markerStart = [...markerStart, ...arrayTag]
             end += arrayTag.length
         }
+        else {
+            // Selection already has tag : don't wrap it again
+            if (selected.includes(markerStart.join('')) && selected.includes(markerEnd.join(''))) {
+                updateValue = false
+            }
+        }
 
         // Wrap the value between tag markers
-        value.splice(start, 0, ...markerStart)
-        value.splice(end, 0, ...markerEnd)
+        if (updateValue) {
+            value.splice(start, 0, ...markerStart)
+            value.splice(end, 0, ...markerEnd)
+        }
         value = value.join('')
     }
 
