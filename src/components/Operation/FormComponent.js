@@ -1,7 +1,8 @@
-import {forwardRef, useImperativeHandle, useMemo, useState} from "react"
+import {forwardRef, useImperativeHandle, useMemo, useRef, useState} from "react"
 import {formatDate} from "@/helpers"
 import {createOperation, destroyOperation, updateOperation} from "@/helpers/operation"
 import {useOperation} from "@/providers/operation";
+import {setMarkdownInputValue} from "@/helpers/markdown";
 
 const OperationFormComponent = ({
     method,
@@ -123,19 +124,7 @@ const OperationFormComponent = ({
     }
 
     const insertMarkdown = (tag) => {
-        let value = formData.detail
-        switch (tag) {
-            case 'b': value += '**bold**'; break
-            case 'i': value += '*italic*'; break
-            case 'd': value += '~~italic~~'; break
-            case 'a': value += '[link title](https://example.com)'; break
-        }
-
-        if (tag.startsWith('h')) {
-            const level = tag.split('')[1]
-            value +=`\n${'#'.repeat(level)} Title ${level}`
-        }
-
+        const value = setMarkdownInputValue(tag, inputDetail.current)
         setFormData(state => ({
             ...state,
             detail: value
@@ -195,10 +184,10 @@ const OperationFormComponent = ({
                 <div className="mb-3">
                     <label htmlFor="detail" className="form-label">Description</label>
                     <div className="btn-group ms-4">
-                        <button type="button" className="btn btn-sm btn-outline-secondary" onClick={() => insertMarkdown('b')}><strong>B</strong></button>
-                        <button type="button" className="btn btn-sm btn-outline-secondary" onClick={() => insertMarkdown('i')}><em>I</em></button>
-                        <button type="button" className="btn btn-sm btn-outline-secondary" onClick={() => insertMarkdown('d')}><del>S</del></button>
-                        <button type="button" className="btn btn-sm btn-outline-secondary" onClick={() => insertMarkdown('a')}>Link</button>
+                        <button type="button" className="btn btn-sm btn-outline-secondary" onClick={() => insertMarkdown('bold')}><strong>B</strong></button>
+                        <button type="button" className="btn btn-sm btn-outline-secondary" onClick={() => insertMarkdown('italic')}><em>I</em></button>
+                        <button type="button" className="btn btn-sm btn-outline-secondary" onClick={() => insertMarkdown('strike')}><del>S</del></button>
+                        <button type="button" className="btn btn-sm btn-outline-secondary" onClick={() => insertMarkdown('link')}>Link</button>
                         <button type="button" className="btn btn-sm btn-outline-secondary dropdown-toggle" data-bs-toggle="dropdown">Title</button>
                         <ul className="dropdown-menu">
                             <li><button type="button" className="dropdown-item h1" onClick={() => insertMarkdown('h1')}>H1</button></li>
@@ -209,7 +198,7 @@ const OperationFormComponent = ({
                             <li><button type="button" className="dropdown-item h6" onClick={() => insertMarkdown('h6')}>H6</button></li>
                         </ul>
                     </div>
-                    <textarea id="detail" name="detail" value={formData.detail} className="form-control" disabled={loading} onChange={updateField} autoComplete="off" rows={5} />
+                    <textarea id="detail" name="detail" ref={inputDetail} value={formData.detail} className="form-control" disabled={loading} onChange={updateField} autoComplete="off" rows={5} />
                     <button type="button" className="btn p-0 form-text text-decoration-underline" onClick={() => setShowMdHelp(!showMdHelp)}>
                         {showMdHelp && 'Hide markdown formats'}
                         {!showMdHelp && 'Show markdown formats'}

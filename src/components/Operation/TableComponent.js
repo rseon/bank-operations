@@ -4,7 +4,7 @@ import {forwardRef, useImperativeHandle, useMemo, useRef, useState} from "react"
 import SortByComponent from "@/components/Operation/SortByComponent";
 import {useOperation} from "@/providers/operation";
 import Link from "next/link";
-import parseMarkdown from "@/helpers/markdown";
+import {parseMarkdown} from "@/helpers/markdown";
 
 const OperationTableComponent = ({
     formComponent,

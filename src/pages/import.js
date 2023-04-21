@@ -5,7 +5,7 @@ import {currency, deepEqual, formatDate, formatDateFromFormat, isEmpty} from "@/
 import {useOperation} from "@/providers/operation";
 import {useRouter} from "next/router";
 import {setOperationsData} from "@/helpers/operation";
-import parseMarkdown from "@/helpers/markdown";
+import {parseMarkdown} from "@/helpers/markdown";
 
 export default function Page() {
 
