@@ -179,7 +179,13 @@ const OperationFormComponent = ({
 
                 <div className="mb-3">
                     <label htmlFor="detail" className="form-label">Description</label>
-                    {inputDetail?.current && <MarkdownToolbar input={inputDetail.current} onMarkdown={(value) => updateValue('detail', value)} />}
+                    {inputDetail?.current &&
+                        <MarkdownToolbar
+                            input={inputDetail.current}
+                            onMarkdown={(value) => updateValue('detail', value)}
+                            allowed={['bold', 'italic', 'strike']}
+                        />
+                    }
                     <textarea id="detail" name="detail" ref={inputDetail} value={formData.detail} className="form-control" disabled={loading} onChange={updateField} autoComplete="off" rows={5} />
                 </div>
 
