@@ -15,6 +15,12 @@ export const parseMarkdown = (md) => {
     md = md.replace(/[\#]{2}(.+)/g, '<h2>$1</h2>');
     md = md.replace(/[\#]{1}(.+)/g, '<h1>$1</h1>');
 
+    // Images
+    md = md.replace(/\!\[([^\]]+)\]\(([^\)]+)\)/g, '<img src="$2" alt="$1" />');
+
+    // Blockquote
+    md = md.replace(/^\>(.+)/gm, '<blockquote>$1</blockquote>');
+
     // Links
     md = md.replace(/[\[]{1}([^\]]+)[\]]{1}[\(]{1}([^\)\"]+)(\"(.+)\")?[\)]{1}/g, '<a href="$2" title="$4" target="_blank">$1</a>');
 
@@ -41,68 +47,73 @@ export const parseMarkdown = (md) => {
  * @returns String
  */
 export const setMarkdownInputValue = (tag, input) => {
-    let markerStart = '', markerEnd = ''
-    let value = input.value
-    let start = input.selectionStart
-    let end = input.selectionEnd + (markerStart.length)
+    let markers = []
+    let value = input.value.split('')
+    let selectionStart = input.selectionStart
+    let selectionEnd = input.selectionEnd
     let updateValue = true
 
-    // Title added on new line at the end
+    // Title
     if (tag.startsWith('h')) {
         const level = tag.split('')[1]
-        value +=`\n${'#'.repeat(level)} Title ${level}`
-        start = value.length
-        end = start
+        markers = [`\n${'#'.repeat(level)} `, '']
     }
     else {
-        // Tag wraps selected text
-        value = value.split('')
-        switch(tag) {
-            case 'bold': markerStart = '**'; break
-            case 'italic': markerStart = '_'; break
-            case 'strike': markerStart = '~~'; break
+        // Other tags (start, end)
+        switch (tag) {
+            case 'bold':
+                markers = ['**', '**']
+                break
+            case 'italic':
+                markers = ['_', '_']
+                break
+            case 'strike':
+                markers = ['~~', '~~']
+                break
+            case 'blockquote':
+                markers = ["\n> ", '']
+                break
             case 'link':
-                markerStart = '['
-                markerEnd = '](https://example.com "Link title")'
+                markers = ['[', '](https://link-url.com "Link title")']
+                break
+            case 'image':
+                markers = ['![', '](https://image-url.com)']
                 break
         }
-
-        if (!markerEnd) {
-            markerEnd = markerStart
-        }
-        markerStart = markerStart.split('')
-        markerEnd = markerEnd.split('')
-
-        end = input.selectionEnd + (markerStart.length)
-
-        // Selected text on input
-        const selected = input.value.substring(input.selectionStart, input.selectionEnd);
-
-        // No text selected : add the tag name inside its marker
-        if (selected.length === 0) {
-            const arrayTag = tag.split('')
-            markerStart = [...markerStart, ...arrayTag]
-            end += arrayTag.length
-        }
-        else {
-            // Selection already has tag : don't wrap it again
-            if (selected.includes(markerStart.join('')) && selected.includes(markerEnd.join(''))) {
-                updateValue = false
-            }
-        }
-
-        // Wrap the value between tag markers
-        if (updateValue) {
-            value.splice(start, 0, ...markerStart)
-            value.splice(end, 0, ...markerEnd)
-        }
-        value = value.join('')
     }
+
+    let [markerStart, markerEnd] = markers.map(m => m.split(''))
+
+    selectionEnd = input.selectionEnd + (markerStart.length)
+
+    // Selected text on input
+    const selected = input.value.substring(input.selectionStart, input.selectionEnd);
+
+    // No text selected : add the tag name inside its marker
+    if (selected.length === 0) {
+        const arrayTag = tag.split('')
+        markerStart = [...markerStart, ...arrayTag]
+        selectionEnd += arrayTag.length
+    }
+    else {
+        // Selection already has tag : don't wrap it again
+        if (selected.includes(markerStart.join('')) && selected.includes(markerEnd.join(''))) {
+            updateValue = false
+        }
+    }
+
+    // Wrap the value between tag markers
+    if (updateValue) {
+        value.splice(selectionStart, 0, ...markerStart)
+        value.splice(selectionEnd, 0, ...markerEnd)
+    }
+    value = value.join('')
+
 
     // Focus input and select tag
     setTimeout(() => {
         input.focus()
-        input.setSelectionRange(start, end + (markerEnd.length))
+        input.setSelectionRange(selectionStart, selectionEnd + (markerEnd.length))
     }, 0)
 
     return value
