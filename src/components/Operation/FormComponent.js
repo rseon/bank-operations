@@ -2,12 +2,14 @@ import {forwardRef, useImperativeHandle, useMemo, useRef, useState} from "react"
 import {formatDate} from "@/helpers"
 import {createOperation, destroyOperation, updateOperation} from "@/helpers/operation"
 import {useOperation} from "@/providers/operation";
-import {setMarkdownInputValue} from "@/helpers/markdown";
+import MarkdownToolbar from "@/components/MarkdownToolbar";
 
 const OperationFormComponent = ({
     method,
     onSubmitted,
 }, ref) => {
+
+    const inputDetail = useRef(null)
 
     const {
         operations,
@@ -32,7 +34,6 @@ const OperationFormComponent = ({
     const [loading, setLoading] = useState(false)
     const [formData, setFormData] = useState(defaultValues)
     const [isUpdate, setIsUpdate] = useState(false)
-    const [showMdHelp, setShowMdHelp] = useState(false)
 
     const setOperation = (operation) => {
         setIsUpdate(true)
@@ -52,7 +53,10 @@ const OperationFormComponent = ({
 
     const updateField = (e) => {
         const { name, value } = e.target
+        updateValue(name, value)
+    }
 
+    const updateValue = (name, value) => {
         setFormData(state => ({
             ...state,
             [name]: value
@@ -123,14 +127,6 @@ const OperationFormComponent = ({
         }
     }
 
-    const insertMarkdown = (tag) => {
-        const value = setMarkdownInputValue(tag, inputDetail.current)
-        setFormData(state => ({
-            ...state,
-            detail: value
-        }))
-    }
-
     return (
         <>
             <form onSubmit={handleSubmit}>
@@ -183,55 +179,8 @@ const OperationFormComponent = ({
 
                 <div className="mb-3">
                     <label htmlFor="detail" className="form-label">Description</label>
-                    <div className="btn-group ms-4">
-                        <button type="button" className="btn btn-sm btn-outline-secondary" onClick={() => insertMarkdown('bold')}><strong>B</strong></button>
-                        <button type="button" className="btn btn-sm btn-outline-secondary" onClick={() => insertMarkdown('italic')}><em>I</em></button>
-                        <button type="button" className="btn btn-sm btn-outline-secondary" onClick={() => insertMarkdown('strike')}><del>S</del></button>
-                        <button type="button" className="btn btn-sm btn-outline-secondary" onClick={() => insertMarkdown('link')}>Link</button>
-                        <button type="button" className="btn btn-sm btn-outline-secondary dropdown-toggle" data-bs-toggle="dropdown">Title</button>
-                        <ul className="dropdown-menu">
-                            <li><button type="button" className="dropdown-item h1" onClick={() => insertMarkdown('h1')}>H1</button></li>
-                            <li><button type="button" className="dropdown-item h2" onClick={() => insertMarkdown('h2')}>H2</button></li>
-                            <li><button type="button" className="dropdown-item h3" onClick={() => insertMarkdown('h3')}>H3</button></li>
-                            <li><button type="button" className="dropdown-item h4" onClick={() => insertMarkdown('h4')}>H4</button></li>
-                            <li><button type="button" className="dropdown-item h5" onClick={() => insertMarkdown('h5')}>H5</button></li>
-                            <li><button type="button" className="dropdown-item h6" onClick={() => insertMarkdown('h6')}>H6</button></li>
-                        </ul>
-                    </div>
+                    {inputDetail?.current && <MarkdownToolbar input={inputDetail.current} onMarkdown={(value) => updateValue('detail', value)} />}
                     <textarea id="detail" name="detail" ref={inputDetail} value={formData.detail} className="form-control" disabled={loading} onChange={updateField} autoComplete="off" rows={5} />
-                    <button type="button" className="btn p-0 form-text text-decoration-underline" onClick={() => setShowMdHelp(!showMdHelp)}>
-                        {showMdHelp && 'Hide markdown formats'}
-                        {!showMdHelp && 'Show markdown formats'}
-                    </button>
-                    {showMdHelp && (
-                        <>
-                            <table className="table table-sm table-borderless form-text">
-                                <tbody>
-                                    <tr>
-                                        <td width={1} className="text-nowrap"><strong>Bold</strong></td>
-                                        <td><code>__bold__</code> or <code>**bold**</code></td>
-                                    </tr>
-                                    <tr>
-                                        <td className="text-nowrap"><em>Italic</em></td>
-                                        <td><code>__italic__</code> or <code>*italic*</code></td>
-                                    </tr>
-                                    <tr>
-                                        <td className="text-nowrap"><del>Strike</del></td>
-                                        <td><code>~~strike~~</code></td>
-                                    </tr>
-                                    <tr>
-                                        <td className="text-nowrap"><a href="https://example.com" onClick={(e) => e.preventDefault()}>Link</a></td>
-                                        <td><code>[link title](https://example.com)</code></td>
-                                    </tr>
-                                    <tr>
-                                        <td className="text-nowrap text-end">Title (h1 to h6)</td>
-                                        <td><code># h1</code> to <code>###### h6</code></td>
-                                    </tr>
-                                </tbody>
-                            </table>
-                        </>
-
-                    )}
                 </div>
 
                 <button type="submit" className="btn btn-outline-primary btn-lg d-flex w-100 justify-content-center align-items-center" disabled={loading}>
