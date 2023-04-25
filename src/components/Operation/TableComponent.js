@@ -15,12 +15,17 @@ const OperationTableComponent = ({
     const {operations, filtered, setFiltered} = useOperation()
 
     const totals = useMemo(() => {
-        return {
-            credit: getCreditTotal(filtered),
-            debit: getDebitTotal(filtered),
-            balance: getBalanceTotal(filtered),
+        let filteredAndChecked = filtered
+        if (!isEmpty(listChecked)) {
+            filteredAndChecked = filteredAndChecked.filter(op => listChecked.includes(op.id))
         }
-    }, [filtered])
+
+        return {
+            credit: getCreditTotal(filteredAndChecked),
+            debit: getDebitTotal(filteredAndChecked),
+            balance: getBalanceTotal(filteredAndChecked),
+        }
+    }, [filtered, listChecked])
 
     const nbFiltered = useMemo(() => {
         return filtered.length
