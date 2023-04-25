@@ -114,7 +114,7 @@ const OperationTableComponent = ({
     }
 
     return (
-        <table className="table table-striped table-hover table-sticky-header">
+        <table className="table table-striped table-hover table-sticky-header table-sticky-footer">
             <thead className="table-light">
                 <tr>
                     {nbFiltered > 1 &&
