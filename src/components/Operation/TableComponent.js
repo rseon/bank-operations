@@ -12,15 +12,20 @@ const OperationTableComponent = ({
     listChecked,
     setListChecked,
 }, ref) => {
-    const {operations, filtered, setFiltered} = useOperation()
+    const {operations, filtered} = useOperation()
 
     const totals = useMemo(() => {
-        return {
-            credit: getCreditTotal(filtered),
-            debit: getDebitTotal(filtered),
-            balance: getBalanceTotal(filtered),
+        let filteredAndChecked = filtered
+        if (!isEmpty(listChecked)) {
+            filteredAndChecked = filteredAndChecked.filter(op => listChecked.includes(op.id))
         }
-    }, [filtered])
+
+        return {
+            credit: getCreditTotal(filteredAndChecked),
+            debit: getDebitTotal(filteredAndChecked),
+            balance: getBalanceTotal(filteredAndChecked),
+        }
+    }, [filtered, listChecked])
 
     const nbFiltered = useMemo(() => {
         return filtered.length
@@ -114,7 +119,7 @@ const OperationTableComponent = ({
     }
 
     return (
-        <table className="table table-striped table-hover table-sticky-header">
+        <table className="table table-striped table-hover table-sticky-header table-sticky-footer">
             <thead className="table-light">
                 <tr>
                     {nbFiltered > 1 &&
@@ -131,7 +136,7 @@ const OperationTableComponent = ({
                         {nbFiltered > 1 && <SortByComponent field="type" />}
                     </th>
                     <th width={1} className="text-nowrap">
-                        Recipient
+                        Category
                         {nbFiltered > 1 && <SortByComponent field="recipient" />}
                     </th>
                     <th>Detail</th>

@@ -1,9 +1,15 @@
 import {formatDate, formatDateFromFormat, round} from "@/helpers/index";
 const version = require('../../package.json').version
 
-const CSV_SEPARATOR = ';'
-const CSV_NEWLINE = "\n"
 const CSV_NEWLINE_TEXT = "[_n]"
+
+export const CSV_UNKNOWN = "UNKNOWN"
+export const CSV_NEWLINE_CRLF = "\r\n"
+export const CSV_NEWLINE_CR = "\r"
+export const CSV_NEWLINE_LF = "\n"
+export const CSV_DELIMITER_COMMA = ","
+export const CSV_DELIMITER_SEMI = ";"
+export const CSV_DELIMITER_TAB = "\t"
 
 const TYPE_BY_MIME = {
     'application/json': "JSON",
@@ -20,12 +26,16 @@ const downloadFile = (content, filename) => {
     link.click()
 }
 
+const detectRegexp = (content, rgxpArray) => {
+    return rgxpArray.find(rgxp => content.match(new RegExp(rgxp)) !== null) || CSV_UNKNOWN
+}
+
 export const getBaseConfigForCsvFormat = () => {
     return {
         skip: 1,
         delimiter: ";",
         dateFormat: 'yyyy-MM-dd',
-        newLine: CSV_NEWLINE
+        newLine: CSV_NEWLINE_CRLF
     }
 }
 
@@ -39,7 +49,7 @@ export const formatCsv = (content, options = {}) => {
 
     // Skip
     let skip = config.skip
-    while(skip >= 0) {
+    while(skip > 0) {
         rows.shift()
         --skip
     }
@@ -57,20 +67,16 @@ export const formatCsv = (content, options = {}) => {
                 credit
             ] = r.split(config.delimiter).map(c => {
                 try {
-                    return decodeURIComponent(escape(c))
+                    return decodeURIComponent(escape(c)).trim()
                 } catch (e) {
-                    return c
+                    return c.trim()
                 }
             })
 
-            credit = credit.replace('\r', '')
+            let amount = credit !== '' ? credit : '-' + debit
+            amount = amount.replace(/(\s|€|$)/g, '')
                 .replace(',', '.')
                 .replace('.00', '')
-
-            debit = debit.replace(',', '.')
-                .replace('.00', '')
-
-            const amount = credit !== '' ? credit : debit
 
             return {
                 id: `${idxPrefix}${idx}`,
@@ -78,9 +84,17 @@ export const formatCsv = (content, options = {}) => {
                 type,
                 recipient,
                 detail: detail.replace(CSV_NEWLINE_TEXT, config.newLine),
-                amount,
+                amount: parseFloat(amount),
             }
         })
+}
+
+export const detectCsvNewLine = (content) => {
+    return detectRegexp(content, [CSV_NEWLINE_CRLF, CSV_NEWLINE_CR, CSV_NEWLINE_LF])
+}
+
+export const detectCsvDelimiter = (content) => {
+    return detectRegexp(content, [CSV_DELIMITER_TAB, CSV_DELIMITER_SEMI, CSV_DELIMITER_COMMA])
 }
 
 export const exportCsv = (operations) => {
@@ -107,14 +121,14 @@ export const exportCsv = (operations) => {
                 date: op.date,
                 type: op.type,
                 recipient: op.recipient,
-                detail: op.detail.replace(CSV_NEWLINE, CSV_NEWLINE_TEXT),
+                detail: op.detail.replace(CSV_NEWLINE_CRLF, CSV_NEWLINE_TEXT),
                 debit,
                 credit,
             }
         })
     ]
-        .map(r => Object.values(r).join(CSV_SEPARATOR))
-        .join(CSV_NEWLINE)
+        .map(r => Object.values(r).join(CSV_DELIMITER_SEMI))
+        .join(CSV_NEWLINE_CRLF)
 
     downloadFile(
         'data:text/csv;charset=utf-8,' + encodeURI(rows),

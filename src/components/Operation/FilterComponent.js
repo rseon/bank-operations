@@ -10,13 +10,13 @@ const OperationFilterComponent = () => {
         return data
     }, [data])
 
-    const [isThisMonth, setIsThisMonth] = useState(false)
+    const [isCurrentMonth, setIsCurrentMonth] = useState(false)
     const [hasFilter, setHasFilter] = useState(false)
 
     const today = useMemo(() => new Date(), [])
 
     useEffect(() => {
-        setIsThisMonth(formatDate(today, 'yyyy-MM') === `${filters.year}-${filters.month}`)
+        setIsCurrentMonth(formatDate(today, 'yyyy-MM') === `${filters.year}-${filters.month}`)
         setHasFilter(!deepEqual(filters, getFiltersBase()))
     }, [filters, today])
 
@@ -56,6 +56,8 @@ const OperationFilterComponent = () => {
                         <div className="mb-2">
                             <label htmlFor="filter_year" className="form-label">Year</label>
                             <select name="year" id="filter_year" className="form-control" value={filters.year} onChange={onChange} autoComplete="off">
+                                <option value="">All years</option>
+                                <option value="" disabled>──────</option>
                                 {years.map((year, idx) => (
                                     <option key={idx} value={year}>{year}</option>
                                 ))}
@@ -66,7 +68,8 @@ const OperationFilterComponent = () => {
                         <div className="mb-2">
                             <label htmlFor="filter_month" className="form-label">Month</label>
                             <select name="month" id="filter_month" className="form-control" value={filters.month} onChange={onChange} autoComplete="off">
-                                <option value=""></option>
+                                <option value="">All months</option>
+                                <option value="" disabled>──────</option>
                                 {[...months.keys()].map((idx) => (
                                     <option key={idx} value={idx}>{months.get(idx)}</option>
                                 ))}
@@ -76,9 +79,9 @@ const OperationFilterComponent = () => {
                     <div className="col-4">
                         <div className="row mt-4">
                             <div className="col-6 mt-2">
-                                {!isThisMonth &&
+                                {!isCurrentMonth &&
                                     <button className="btn btn-light" onClick={filterOnCurrentMonth}>
-                                        <small>📅 This month</small>
+                                        <small>📅 Current month</small>
                                     </button>
                                 }
                             </div>
@@ -108,7 +111,7 @@ const OperationFilterComponent = () => {
                         }
                     </div>
                     <div className="col-3">
-                        <label htmlFor="filter_type" className="form-label">Recipient</label>
+                        <label htmlFor="filter_type" className="form-label">Category</label>
                         <select name="recipient" id="filter_recipient" className="form-control" value={filters.recipient} onChange={onChange} autoComplete="off">
                             <option value=""></option>
                             {recipients.map((recipient, idx) => (
