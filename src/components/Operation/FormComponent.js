@@ -11,13 +11,7 @@ const OperationFormComponent = ({
 
     const inputDetail = useRef(null)
 
-    const {
-        operations,
-        data, reloadList,
-        filtered, setFiltered,
-        filters, setFilters,
-        sortBy, saveSortBy
-    } = useOperation()
+    const {data} = useOperation()
 
     const { types, recipients } = useMemo(() => {
         return data
@@ -165,7 +159,7 @@ const OperationFormComponent = ({
                     </div>
                     <div className="col-6">
                         <div className="mb-3">
-                            <label htmlFor="recipient" className="form-label">Recipient</label>
+                            <label htmlFor="recipient" className="form-label">Category</label>
                             <input id="recipient" name="recipient" list="recipients" value={formData.recipient} className="form-control" required disabled={loading} onChange={updateField} autoComplete="off" />
                             <datalist id="recipients">
                                 {recipients.map((recipient, idx) => (

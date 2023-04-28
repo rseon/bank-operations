@@ -12,7 +12,7 @@ const OperationTableComponent = ({
     listChecked,
     setListChecked,
 }, ref) => {
-    const {operations, filtered, setFiltered} = useOperation()
+    const {operations, filtered} = useOperation()
 
     const totals = useMemo(() => {
         let filteredAndChecked = filtered
@@ -136,7 +136,7 @@ const OperationTableComponent = ({
                         {nbFiltered > 1 && <SortByComponent field="type" />}
                     </th>
                     <th width={1} className="text-nowrap">
-                        Recipient
+                        Category
                         {nbFiltered > 1 && <SortByComponent field="recipient" />}
                     </th>
                     <th>Detail</th>

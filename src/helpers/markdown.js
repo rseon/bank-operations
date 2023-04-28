@@ -1,19 +1,10 @@
 // @link https://codepen.io/kvendrik/pen/bGKeEE
 
 /**
- * Only titles (h1 to h6), links, bold/italic/strike
  * @param String md
  * @returns String
  */
 export const parseMarkdown = (md) => {
-
-    // Titles
-    md = md.replace(/[\#]{6}(.+)/g, '<h6>$1</h6>');
-    md = md.replace(/[\#]{5}(.+)/g, '<h5>$1</h5>');
-    md = md.replace(/[\#]{4}(.+)/g, '<h4>$1</h4>');
-    md = md.replace(/[\#]{3}(.+)/g, '<h3>$1</h3>');
-    md = md.replace(/[\#]{2}(.+)/g, '<h2>$1</h2>');
-    md = md.replace(/[\#]{1}(.+)/g, '<h1>$1</h1>');
 
     // Images
     md = md.replace(/\!\[([^\]]+)\]\(([^\)]+)\)/g, '<img src="$2" alt="$1" />');
@@ -53,33 +44,26 @@ export const setMarkdownInputValue = (tag, input) => {
     let selectionEnd = input.selectionEnd
     let updateValue = true
 
-    // Title
-    if (tag.startsWith('h')) {
-        const level = tag.split('')[1]
-        markers = [`\n${'#'.repeat(level)} `, '']
-    }
-    else {
-        // Other tags (start, end)
-        switch (tag) {
-            case 'bold':
-                markers = ['**', '**']
-                break
-            case 'italic':
-                markers = ['_', '_']
-                break
-            case 'strike':
-                markers = ['~~', '~~']
-                break
-            case 'blockquote':
-                markers = ["\n> ", '']
-                break
-            case 'link':
-                markers = ['[', '](https://link-url.com "Link title")']
-                break
-            case 'image':
-                markers = ['![', '](https://image-url.com)']
-                break
-        }
+    // Tags (start, end)
+    switch (tag) {
+        case 'bold':
+            markers = ['**', '**']
+            break
+        case 'italic':
+            markers = ['_', '_']
+            break
+        case 'strike':
+            markers = ['~~', '~~']
+            break
+        case 'blockquote':
+            markers = ["\n> ", '']
+            break
+        case 'link':
+            markers = ['[', '](https://link-url.com "Link title")']
+            break
+        case 'image':
+            markers = ['![', '](https://image-url.com)']
+            break
     }
 
     let [markerStart, markerEnd] = markers.map(m => m.split(''))

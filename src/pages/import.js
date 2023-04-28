@@ -1,5 +1,5 @@
 import Layout from "@/pages/_layout";
-import {fileIsCsv, fileIsJson, formatCsv, formatJson, getBaseConfigForCsvFormat, getHumanReadableSize, getTypeByMime} from "@/helpers/file";
+import {detectCsvDelimiter, detectCsvNewLine, fileIsCsv, fileIsJson, formatCsv, formatJson, getBaseConfigForCsvFormat, getHumanReadableSize, getTypeByMime, CSV_UNKNOWN, CSV_NEWLINE_CRLF, CSV_NEWLINE_LF, CSV_NEWLINE_CR, CSV_DELIMITER_SEMI, CSV_DELIMITER_COMMA, CSV_DELIMITER_TAB} from "@/helpers/file";
 import {useMemo, useState} from "react";
 import {currency, deepEqual, formatDate, formatDateFromFormat, isEmpty} from "@/helpers";
 import {useOperation} from "@/providers/operation";
@@ -34,8 +34,10 @@ export default function Page() {
                 const opCopy = {...operation}
                 delete rowCopy.id
                 delete rowCopy.exists
+                delete rowCopy.detail
                 delete opCopy.id
                 delete opCopy.exists
+                delete opCopy.detail
                 rowCopy.amount = parseFloat(rowCopy.amount)
                 return deepEqual(opCopy, rowCopy)
             })
@@ -83,13 +85,26 @@ export default function Page() {
 
         const reader = new FileReader();
         reader.onload = (e) => {
+            const content = e.target.result
+
             switch (getTypeByMime(file.type)) {
                 case 'CSV':
                     setConfigure(true)
-                    setRawContent(e.target.result)
+                    setRawContent(content)
+
+                    const detectedDelimiter = detectCsvDelimiter(content)
+                    if (detectedDelimiter !== CSV_UNKNOWN) {
+                        updateConfiguration('delimiter', detectedDelimiter)
+                    }
+
+                    const detectedNewLine = detectCsvNewLine(content)
+                    if (detectedNewLine !== CSV_UNKNOWN) {
+                        updateConfiguration('newLine', detectedNewLine)
+                    }
+
                     break
                 case 'JSON':
-                    setContent(formatJson(e.target.result))
+                    setContent(formatJson(content))
                     break
                 default:
                     alert(`File type ${file.type} invalid`)
@@ -127,13 +142,17 @@ export default function Page() {
         setContentErrors(new Set())
     }
 
-    const onChangeConfiguration = (event) => {
+    const updateConfiguration = (field, value) => {
         setConfiguration((state) => {
             return {
                 ...state,
-                [event.target.name]: event.target.value
+                [field]: value
             }
         })
+    }
+
+    const onChangeConfiguration = (event) => {
+        updateConfiguration(event.target.name, event.target.value)
     }
 
     const testDateFormat = () => {
@@ -215,21 +234,30 @@ export default function Page() {
                     {configure &&
                         <>
                             <div className="row mb-3">
-                                <div className="col-4">
+                                <div className="col-3">
                                     <label htmlFor="config_skip" className="form-label">Number of lines to skip at the beginning of the file</label>
                                     <div className="input-group">
                                         <input id="config_skip" name="skip" type="number" min={0} className="form-control" value={configuration.skip} onChange={onChangeConfiguration} autoComplete="off" />
                                         <span className="input-group-text">rows</span>
                                     </div>
                                 </div>
-                                <div className="col-4">
+                                <div className="col-3">
                                     <label htmlFor="config_delimiter" className="form-label">Column delimiter</label>
                                     <select name="delimiter" id="config_delimiter" className="form-control" value={configuration.delimiter} onChange={onChangeConfiguration} autoComplete="off">
-                                        <option value=";">;</option>
-                                        <option value=",">,</option>
+                                        <option value={CSV_DELIMITER_SEMI}>Semicolon (;)</option>
+                                        <option value={CSV_DELIMITER_COMMA}>Comma (,)</option>
+                                        <option value={CSV_DELIMITER_TAB}>Tabulation</option>
                                     </select>
                                 </div>
-                                <div className="col-4">
+                                <div className="col-3">
+                                    <label htmlFor="config_newline" className="form-label">New line style</label>
+                                    <select name="newLine" id="config_newline" className="form-control" value={configuration.newLine} onChange={onChangeConfiguration} autoComplete="off">
+                                        <option value={CSV_NEWLINE_CRLF}>Windows style</option>
+                                        <option value={CSV_NEWLINE_LF}>UNIX style</option>
+                                        <option value={CSV_NEWLINE_CR}>Mac style</option>
+                                    </select>
+                                </div>
+                                <div className="col-3">
                                     <label htmlFor="config_dateformat" className="form-label">Date format</label>
                                     <input type="text" name="dateFormat" id="config_dateformat" className="form-control" value={configuration.dateFormat} onChange={onChangeConfiguration} autoComplete="off" />
                                     <div className="d-flex justify-content-between">
@@ -247,9 +275,9 @@ export default function Page() {
                                     {showDateFormats &&
                                         <div className="alert alert-light">
                                             <ul className="mb-0 list-unstyled">
-                                                <li><code>yyyy</code> : Year with 4 digits</li>
-                                                <li><code>MM</code> : Month with 2 digits</li>
-                                                <li><code>dd</code> : Day of the month with 2 digits</li>
+                                                <li><code>yyyy</code> : Year with 4 digits (ex: <code>2023</code>)</li>
+                                                <li><code>MM</code> : Month with 2 digits (ex: <code>03</code>)</li>
+                                                <li><code>dd</code> : Day with 2 digits (ex: <code>09</code>)</li>
                                             </ul>
                                             <a href="https://date-fns.org/v2.29.3/docs/format" target="_blank">
                                                 All formats
@@ -261,6 +289,12 @@ export default function Page() {
                             <button className="btn btn-outline-success" onClick={validateConfiguration}>
                                 Continue ▶️
                             </button>
+
+                            <hr/>
+
+                            <h4>Preview raw content</h4>
+
+                            <pre>{rawContent}</pre>
                         </>
                     }
                     {!configure && content &&
@@ -282,7 +316,7 @@ export default function Page() {
                                         <tr>
                                             <th width={1}>Date</th>
                                             <th width={1}>Type</th>
-                                            <th width={1}>Recipient</th>
+                                            <th width={1}>Category</th>
                                             <th>Detail</th>
                                             <th width={1}>Amount</th>
                                         </tr>
@@ -308,7 +342,9 @@ export default function Page() {
                                                 </td>
                                                 <td className="text-nowrap" dangerouslySetInnerHTML={{ __html: parseMarkdown(op.detail) }} />
                                                 <td className="text-nowrap text-end">
-                                                    {currency(op.amount)}
+                                                    <strong className={`text-${op.amount >= 0 ? 'success' : 'danger'}`}>
+                                                        {currency(op.amount)}
+                                                    </strong>
                                                 </td>
                                             </tr>
                                         ))}
