@@ -111,7 +111,7 @@ const OperationFilterComponent = () => {
                         }
                     </div>
                     <div className="col-3">
-                        <label htmlFor="filter_type" className="form-label">Recipient</label>
+                        <label htmlFor="filter_type" className="form-label">Category</label>
                         <select name="recipient" id="filter_recipient" className="form-control" value={filters.recipient} onChange={onChange} autoComplete="off">
                             <option value=""></option>
                             {recipients.map((recipient, idx) => (
