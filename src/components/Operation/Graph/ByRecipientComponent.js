@@ -60,7 +60,7 @@ export default function GraphByRecipient() {
             key={reload}
             data={chart}
             options={getOptions({
-                title: 'Operations by recipient',
+                title: 'Operations by category',
                 plugins: {tooltip}
             })}
             redraw={true}
