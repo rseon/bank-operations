@@ -61,7 +61,8 @@ export const formatCsv = (content, options = {}) => {
             let [
                 date,
                 type,
-                recipient,
+                category,
+                subcat,
                 detail,
                 debit,
                 credit
@@ -82,7 +83,8 @@ export const formatCsv = (content, options = {}) => {
                 id: `${idxPrefix}${idx}`,
                 date: formatDateFromFormat(date, config.dateFormat),
                 type,
-                recipient,
+                category,
+                subcat,
                 detail: detail.replace(CSV_NEWLINE_TEXT, config.newLine),
                 amount: parseFloat(amount),
             }
@@ -102,7 +104,8 @@ export const exportCsv = (operations) => {
         {
             date: 'Date',
             type: 'Type',
-            recipient: 'Recipient',
+            category: 'Category',
+            subcat: 'Sub-category',
             detail: 'Detail',
             debit: 'Debit',
             credit: 'Credit',
@@ -120,7 +123,8 @@ export const exportCsv = (operations) => {
             return {
                 date: op.date,
                 type: op.type,
-                recipient: op.recipient,
+                category: op.category,
+                subcat: op.subcat,
                 detail: op.detail.replace(CSV_NEWLINE_CRLF, CSV_NEWLINE_TEXT),
                 debit,
                 credit,

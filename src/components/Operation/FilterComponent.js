@@ -6,7 +6,7 @@ import {useOperation} from "@/providers/operation";
 const OperationFilterComponent = () => {
     const {data, filters, setFilters} = useOperation()
 
-    const { types, recipients, years, months } = useMemo(() => {
+    const { types, categories, years, months } = useMemo(() => {
         return data
     }, [data])
 
@@ -14,6 +14,24 @@ const OperationFilterComponent = () => {
     const [hasFilter, setHasFilter] = useState(false)
 
     const today = useMemo(() => new Date(), [])
+
+    const subcatsByCat = useMemo(() => {
+        let cats = {}
+        data.operations.forEach(op => {
+            if (!op.subcat) {
+                return
+            }
+            if (!(op.category in cats)) {
+                cats[op.category] = []
+            }
+            const cat = cats[op.category]
+            if (!cat.includes(op.subcat)) {
+                cat.push(op.subcat)
+            }
+        })
+
+        return Object.keys(cats).sort().reduce((r, k) => (r[k] = cats[k].sort(), r), {})
+    }, [data])
 
     useEffect(() => {
         setIsCurrentMonth(formatDate(today, 'yyyy-MM') === `${filters.year}-${filters.month}`)
@@ -96,7 +114,7 @@ const OperationFilterComponent = () => {
                     </div>
                 </div>
                 <div className="row">
-                    <div className="col-3">
+                    <div className="col">
                         <label htmlFor="filter_type" className="form-label">Type</label>
                         <select name="type" id="filter_type" className="form-control" value={filters.type} onChange={onChange} autoComplete="off">
                             <option value=""></option>
@@ -110,21 +128,39 @@ const OperationFilterComponent = () => {
                             </button>
                         }
                     </div>
-                    <div className="col-3">
-                        <label htmlFor="filter_type" className="form-label">Category</label>
-                        <select name="recipient" id="filter_recipient" className="form-control" value={filters.recipient} onChange={onChange} autoComplete="off">
+                    <div className="col">
+                        <label htmlFor="filter_category" className="form-label">Category</label>
+                        <select name="category" id="filter_category" className="form-control" value={filters.category} onChange={onChange} autoComplete="off">
                             <option value=""></option>
-                            {recipients.map((recipient, idx) => (
-                                <option key={idx} value={recipient}>{recipient}</option>
+                            {categories.map((category, idx) => (
+                                <option key={idx} value={category}>{category}</option>
                             ))}
                         </select>
-                        {filters.recipient !== '' &&
-                            <button className="btn btn-link p-0" onClick={() => updateFilter('recipient', '')}>
+                        {filters.category !== '' &&
+                            <button className="btn btn-link p-0" onClick={() => updateFilter('category', '')}>
                                 <small>Reset filter</small>
                             </button>
                         }
                     </div>
-                    <div className="col-3">
+                    <div className="col">
+                        <label htmlFor="filter_subcat" className="form-label">Subcategory</label>
+                        <select name="subcat" id="filter_subcat" className="form-control" value={filters.subcat} onChange={onChange} autoComplete="off">
+                            <option value=""></option>
+                            {Object.keys(subcatsByCat).map(cat => (
+                                <optgroup key={cat} label={cat}>
+                                    {subcatsByCat[cat].map((subcat, idx) => (
+                                        <option key={idx} value={subcat}>{subcat}</option>
+                                    ))}
+                                </optgroup>
+                            ))}
+                        </select>
+                        {filters.subcat !== '' &&
+                            <button className="btn btn-link p-0" onClick={() => updateFilter('subcat', '')}>
+                                <small>Reset filter</small>
+                            </button>
+                        }
+                    </div>
+                    <div className="col">
                         <label htmlFor="filter_detail" className="form-label">Detail</label>
                         <input id="filter_detail" name="detail" type="search" className="form-control" value={filters.detail} onChange={onChange} autoComplete="off" />
                         {filters.detail !== '' &&
@@ -133,7 +169,7 @@ const OperationFilterComponent = () => {
                             </button>
                         }
                     </div>
-                    <div className="col-3">
+                    <div className="col">
                         <label htmlFor="filter_type" className="form-label">Balance</label>
                         <select name="balance" id="filter_balance" className="form-control" value={filters.balance} onChange={onChange} autoComplete="off">
                             <option value=""></option>

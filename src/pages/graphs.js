@@ -1,7 +1,8 @@
 import {useMemo, useState} from "react";
 import GraphByBalance from "@/components/Operation/Graph/ByBalanceComponent";
 import GraphByDate from "@/components/Operation/Graph/ByDateComponent";
-import GraphByRecipient from "@/components/Operation/Graph/ByRecipientComponent";
+import GraphByCategory from "@/components/Operation/Graph/ByCategoryComponent";
+import GraphBySubCategory from "@/components/Operation/Graph/BySubCategoryComponent";
 import GraphByType from "@/components/Operation/Graph/ByTypeComponent";
 import {isEmpty} from "@/helpers";
 import FilterComponent from "@/components/Operation/FilterComponent";
@@ -55,15 +56,18 @@ export default function Page() {
                     <div className="row">
                         <div className="col-6 mb-5">
                             <GraphByBalance />
+                            <GraphByType />
                         </div>
                         <div className="col-6 mb-5">
                             <GraphByDate />
                         </div>
+                    </div>
+                    <div className="row">
                         <div className="col-6 mb-5">
-                            <GraphByType />
+                            <GraphByCategory />
                         </div>
                         <div className="col-6 mb-5">
-                            <GraphByRecipient />
+                            <GraphBySubCategory />
                         </div>
                     </div>
                 </>

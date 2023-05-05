@@ -137,7 +137,11 @@ const OperationTableComponent = ({
                     </th>
                     <th width={1} className="text-nowrap">
                         Category
-                        {nbFiltered > 1 && <SortByComponent field="recipient" />}
+                        {nbFiltered > 1 && <SortByComponent field="category" />}
+                    </th>
+                    <th width={1} className="text-nowrap">
+                        Sub-category
+                        {nbFiltered > 1 && <SortByComponent field="subcat" />}
                     </th>
                     <th>Detail</th>
                     <th width={1}>Debit</th>
@@ -196,7 +200,10 @@ const OperationTableComponent = ({
                             {op.type}
                         </td>
                         <td className="text-nowrap">
-                            {op.recipient}
+                            {op.category}
+                        </td>
+                        <td className="text-nowrap">
+                            {op.subcat}
                         </td>
                         <td className="text-nowrap" dangerouslySetInnerHTML={{ __html: parseMarkdown(op.detail) }} />
                         <td className="text-nowrap text-end">
@@ -224,7 +231,7 @@ const OperationTableComponent = ({
             {!isEmpty(filtered) &&
                 <tfoot className="table-light">
                     <tr>
-                        <td colSpan={nbFiltered > 1 ? 5 : 4} className="text-end">
+                        <td colSpan={nbFiltered > 1 ? 6 : 5} className="text-end">
                             Balance : {' '}
                             <strong className={`text-${totals.balance >= 0 ? 'success' : 'danger'}`}>
                                 {currency(totals.balance)}
