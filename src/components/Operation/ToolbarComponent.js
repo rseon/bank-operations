@@ -1,4 +1,4 @@
-import {isEmpty} from "@/helpers";
+import {formatDateFromFormat, isEmpty} from "@/helpers";
 import {forwardRef, useImperativeHandle, useMemo, useState} from "react";
 import FilterComponent from "@/components/Operation/FilterComponent";
 import {removeOperations} from "@/helpers/operation";
@@ -17,6 +17,32 @@ const OperationToolbarComponent = ({
 
     const nbFilters = useMemo(() => {
         return Object.values(filters).filter(f => f !== '').length
+    }, [filters])
+
+    const filtersAsString = useMemo(() => {
+        let newFilters = {...filters}
+        if (newFilters.year) {
+            if (newFilters.month) {
+                newFilters = {
+                    date: `${formatDateFromFormat(filters.month, 'MM', 'MMMM')} ${filters.year}`,
+                    ...filters
+                }
+                delete newFilters.year
+                delete newFilters.month
+            }
+        }
+
+        return Object.keys(newFilters)
+            .filter(k => newFilters[k] !== '')
+            .map(k => {
+                const key = k.charAt(0).toUpperCase() + k.slice(1)
+                let value = newFilters[k]
+                if (k === "month") {
+                    value = formatDateFromFormat(value, 'MM', 'MMMM')
+                }
+                return `${key} <strong>${value}</strong>`
+            })
+            .join(' / ')
     }, [filters])
 
     useImperativeHandle(ref, () => ({
@@ -76,6 +102,8 @@ const OperationToolbarComponent = ({
                                     </>
                                 )}
                             </span>
+
+                            <small className="text-body-tertiary ms-3" dangerouslySetInnerHTML={{ __html: filtersAsString }} />
                         </>
                     }
                 </div>
