@@ -35,8 +35,8 @@ export const formatDateFromFormat = (date, formatFrom, formatTo = 'yyyy-MM-dd', 
     return null
 }
 
-export const currency = (amount, throwError = false) => {
-    let formatted = round(amount)
+export const formatNumber = (value, suffix = null, throwError = false) => {
+    let formatted = round(value)
         .toLocaleString()
         .toString()
         .replace(/(\,00)|(\.00)/, '')
@@ -51,10 +51,22 @@ export const currency = (amount, throwError = false) => {
         if (throwError) {
             throw new Error(`Amount is NaN`)
         }
-        return amount
+        return value
     }
 
-    return `${formatted} €`
+    if (suffix) {
+        suffix = ` ${suffix}`
+    }
+
+    return `${formatted}${suffix}`
+}
+
+export const currency = (amount, throwError = false) => {
+    return formatNumber(amount, '€', throwError)
+}
+
+export const percent = (value, throwError = false) => {
+    return formatNumber(value, '%', throwError)
 }
 
 export const isEmpty = (array) => array.length === 0

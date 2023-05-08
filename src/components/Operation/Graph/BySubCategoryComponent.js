@@ -3,7 +3,7 @@ import {useEffect, useMemo, useState} from "react";
 import { Chart as ChartJS, ArcElement, Tooltip, Legend, Colors, Title } from 'chart.js';
 import { Doughnut } from 'react-chartjs-2';
 import {getOptions} from "@/helpers/graph";
-import {currency} from "@/helpers";
+import {currency, percent} from "@/helpers";
 import autocolors from 'chartjs-plugin-autocolors';
 import {useOperation} from "@/providers/operation";
 
@@ -23,9 +23,9 @@ export default function GraphBySubCategory() {
                     let label = context.dataset.label || ''
                     return `Total: ${currency(context.parsed)}`
                 },
-                title: (items) => {
+                footer: (items) => {
                     const item = items[0]
-                    return `${item.label} (${chartData.count[item.label]} operations)`
+                    return `${chartData.count[item.label]} / ${chartData.total} operations (${percent(chartData.count[item.label] / chartData.total * 100)})`
                 }
             }
         }
@@ -34,7 +34,8 @@ export default function GraphBySubCategory() {
     useEffect(() => {
         const infos = {
             chartData: new Map(),
-            count: {}
+            count: {},
+            total: operations.length
         }
 
         operations.forEach(op => {
