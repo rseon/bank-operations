@@ -39,6 +39,13 @@ export const filterOperations = (operations, filters = {}, sortBy = []) => {
                 }
             }
         }
+        else {
+            if (filters.month) {
+                if (op.date.split('-')[1] !== filters.month) {
+                    return false
+                }
+            }
+        }
         if (filters.type && op.type.toLowerCase() !== filters.type.toLowerCase()) {
             return false
         }
