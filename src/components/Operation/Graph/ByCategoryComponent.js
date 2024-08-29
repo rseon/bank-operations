@@ -9,7 +9,7 @@ import {useOperation} from "@/providers/operation";
 
 ChartJS.register(ArcElement, Tooltip, Legend, Colors, Title, autocolors);
 
-export default function GraphByType() {
+export default function GraphByCategory() {
 
     const {filtered: operations} = useOperation()
     const [chartData, setChartData] = useState(null)
@@ -39,7 +39,7 @@ export default function GraphByType() {
         }
 
         operations.forEach(op => {
-            const key = op.type
+            const key = op.category
             infos.chartData.set(key, parseFloat(op.amount) + (infos.chartData.get(key) || 0))
             infos.count[key] = 1 + (infos.count[key] || 0)
         })
@@ -61,10 +61,8 @@ export default function GraphByType() {
             key={reload}
             data={chart}
             options={getOptions({
-                title: 'Operations by type',
-                plugins: {
-                    tooltip
-                }
+                title: 'Operations by category',
+                plugins: {tooltip}
             })}
             redraw={true}
         />

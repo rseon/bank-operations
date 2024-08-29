@@ -9,7 +9,8 @@ export const getFiltersBase = () => {
         year: formatDate(today, 'yyyy'),
         month: formatDate(today, 'MM'),
         type: '',
-        recipient: '',
+        category: '',
+        subcat: '',
         detail: '',
         balance: '',
     }
@@ -38,10 +39,20 @@ export const filterOperations = (operations, filters = {}, sortBy = []) => {
                 }
             }
         }
+        else {
+            if (filters.month) {
+                if (op.date.split('-')[1] !== filters.month) {
+                    return false
+                }
+            }
+        }
         if (filters.type && op.type.toLowerCase() !== filters.type.toLowerCase()) {
             return false
         }
-        if (filters.recipient && op.recipient.toLowerCase() !== filters.recipient.toLowerCase()) {
+        if (filters.category && op.category.toLowerCase() !== filters.category.toLowerCase()) {
+            return false
+        }
+        if (filters.subcat && op.subcat.toLowerCase() !== filters.subcat.toLowerCase()) {
             return false
         }
         if (filters.detail && !op.detail.toLowerCase().includes(filters.detail.toLowerCase())) {

@@ -1,8 +1,9 @@
 import {forwardRef, useImperativeHandle, useMemo, useRef, useState} from "react"
-import {formatDate} from "@/helpers"
+import { DIRECT_DEBIT_LABEL, formatDate } from '@/helpers'
 import {createOperation, destroyOperation, updateOperation} from "@/helpers/operation"
 import {useOperation} from "@/providers/operation";
 import MarkdownToolbar from "@/components/MarkdownToolbar";
+import DirectDebitList from '@/components/Operation/DirectDebitListComponent'
 
 const OperationFormComponent = ({
     method,
@@ -13,7 +14,7 @@ const OperationFormComponent = ({
 
     const {data} = useOperation()
 
-    const { types, recipients } = useMemo(() => {
+    const { types, categories, subcats } = useMemo(() => {
         return data
     }, [data])
 
@@ -21,13 +22,15 @@ const OperationFormComponent = ({
         date: formatDate(new Date(), 'yyyy-MM-dd'),
         amount: '',
         type: '',
-        recipient: '',
+        category: '',
+        subcat: '',
         detail: '',
     }
 
     const [loading, setLoading] = useState(false)
     const [formData, setFormData] = useState(defaultValues)
     const [isUpdate, setIsUpdate] = useState(false)
+    const [showDirectDebit, setShowDirectDebit] = useState(false)
 
     const setOperation = (operation) => {
         setIsUpdate(true)
@@ -36,7 +39,8 @@ const OperationFormComponent = ({
             date: formatDate(operation.date, 'yyyy-MM-dd') || '',
             amount: operation.amount || '',
             type: operation.type || '',
-            recipient: operation.recipient || '',
+            category: operation.category || '',
+            subcat: operation.subcat || '',
             detail: operation.detail || '',
         })
     }
@@ -74,11 +78,18 @@ const OperationFormComponent = ({
             formData.type = type
         }
 
-        let recipient = recipients.find(r => {
-            return r.toLowerCase() === formData.recipient.toLowerCase()
+        let category = categories.find(r => {
+            return r.toLowerCase() === formData.category.toLowerCase()
         })
-        if (recipient) {
-            formData.recipient = recipient
+        if (category) {
+            formData.category = category
+        }
+
+        let subcat = subcats.find(r => {
+            return r.toLowerCase() === formData.subcat.toLowerCase()
+        })
+        if (subcat) {
+            formData.subcat = subcat
         }
 
         if (method === 'create') {
@@ -88,7 +99,8 @@ const OperationFormComponent = ({
                 date: formData.date,
                 detail: formData.detail,
                 type: formData.type,
-                recipient: formData.recipient,
+                category: formData.category,
+                subcat: formData.subcat,
             })
         }
 
@@ -98,7 +110,8 @@ const OperationFormComponent = ({
                 date: formData.date,
                 detail: formData.detail,
                 type: formData.type,
-                recipient: formData.recipient,
+                category: formData.category,
+                subcat: formData.subcat,
             })
         }
 
@@ -121,9 +134,40 @@ const OperationFormComponent = ({
         }
     }
 
+    const setDirectDebit = ({ category, amount }) => {
+        updateValue('category', category)
+        updateValue('amount', amount)
+        updateValue('type', DIRECT_DEBIT_LABEL)
+        setShowDirectDebit(false)
+    }
+
+    const resetForm = () => {
+        setFormData(defaultValues)
+    }
+
     return (
         <>
             <form onSubmit={handleSubmit}>
+                <div className="row">
+                    <div className="col-6">
+                        <button type="button" className="btn btn-link btn-sm text-decoration-none" onClick={() => setShowDirectDebit(!showDirectDebit)}>
+                            Existing direct debit
+                        </button>
+                    </div>
+                    <div className="col-6 text-end">
+                        <button type="button" className="btn btn-link btn-sm text-decoration-none" onClick={() => resetForm()}>
+                            Clear
+                        </button>
+                    </div>
+                </div>
+
+                {showDirectDebit && (
+                  <DirectDebitList
+                    className="mb-2"
+                    onSetDirectDebit={value => setDirectDebit(value)}
+                  />
+                )}
+
                 <div className="row">
                     <div className="col-6">
                         <div className="mb-3">
@@ -145,6 +189,7 @@ const OperationFormComponent = ({
                 </div>
 
                 <div className="row">
+                    {/* @todo Hide subcategory <div className="col-4">*/}
                     <div className="col-6">
                         <div className="mb-3">
                             <label htmlFor="type" className="form-label">Type</label>
@@ -157,18 +202,35 @@ const OperationFormComponent = ({
                             <span className="form-text">Example: <em>Credit card</em>, <em>Bank transfer</em>...</span>
                         </div>
                     </div>
+                    {/* @todo Hide subcategory <div className="col-4">*/}
                     <div className="col-6">
                         <div className="mb-3">
-                            <label htmlFor="recipient" className="form-label">Category</label>
-                            <input id="recipient" name="recipient" list="recipients" value={formData.recipient} className="form-control" required disabled={loading} onChange={updateField} autoComplete="off" />
-                            <datalist id="recipients">
-                                {recipients.map((recipient, idx) => (
-                                    <option key={idx} value={recipient} />
+                            <label htmlFor="category" className="form-label">Category</label>
+                            <input id="category" name="category" list="categories" value={formData.category} className="form-control" required disabled={loading} onChange={updateField} autoComplete="off" />
+                            <datalist id="categories">
+                                {categories.map((category, idx) => (
+                                    <option key={idx} value={category} />
                                 ))}
                             </datalist>
-                            <span className="form-text">Example: <em>Insurance</em>, <em>Phone subscription</em>...</span>
+                            <span className="form-text">Example: <em>Car</em>...</span>
                         </div>
                     </div>
+                    {/* @todo Hide subcategory
+                    <div className="col-4">
+                        <div className="mb-3">
+                            <label htmlFor="subcat" className="form-label">
+                                Sub-category <span className="form-text">optional</span>
+                            </label>
+                            <input id="subcat" name="subcat" list="subcats" value={formData.subcat} className="form-control" disabled={loading} onChange={updateField} autoComplete="off" />
+                            <datalist id="subcats">
+                                {subcats.map((subcat, idx) => (
+                                    <option key={idx} value={subcat} />
+                                ))}
+                            </datalist>
+                            <span className="form-text">Example: <em>Parking</em>...</span>
+                        </div>
+                    </div>
+                    */}
                 </div>
 
                 <div className="mb-3">
@@ -184,8 +246,8 @@ const OperationFormComponent = ({
                 </div>
 
                 <button type="submit" className="btn btn-outline-primary btn-lg d-flex w-100 justify-content-center align-items-center" disabled={loading}>
-                    {loading && <span className="spinner-border spinner-border-sm me-2" /> }
-                    {!loading && <span className="me-2">💾</span> }
+                    {loading && <span className="spinner-border spinner-border-sm me-2" />}
+                    {!loading && <span className="me-2">💾</span>}
                     Save operation
                 </button>
             </form>

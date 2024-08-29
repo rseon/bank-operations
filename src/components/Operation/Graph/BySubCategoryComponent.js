@@ -3,13 +3,13 @@ import {useEffect, useMemo, useState} from "react";
 import { Chart as ChartJS, ArcElement, Tooltip, Legend, Colors, Title } from 'chart.js';
 import { Doughnut } from 'react-chartjs-2';
 import {getOptions} from "@/helpers/graph";
-import {currency} from "@/helpers";
+import {currency, percent} from "@/helpers";
 import autocolors from 'chartjs-plugin-autocolors';
 import {useOperation} from "@/providers/operation";
 
 ChartJS.register(ArcElement, Tooltip, Legend, Colors, Title, autocolors);
 
-export default function GraphByRecipient() {
+export default function GraphBySubCategory() {
 
     const {filtered: operations} = useOperation()
     const [chartData, setChartData] = useState(null)
@@ -23,9 +23,9 @@ export default function GraphByRecipient() {
                     let label = context.dataset.label || ''
                     return `Total: ${currency(context.parsed)}`
                 },
-                title: (items) => {
+                footer: (items) => {
                     const item = items[0]
-                    return `${item.label} (${chartData.count[item.label]} operations)`
+                    return `${chartData.count[item.label]} / ${chartData.total} operations (${percent(chartData.count[item.label] / chartData.total * 100)})`
                 }
             }
         }
@@ -34,11 +34,12 @@ export default function GraphByRecipient() {
     useEffect(() => {
         const infos = {
             chartData: new Map(),
-            count: {}
+            count: {},
+            total: operations.length
         }
 
         operations.forEach(op => {
-            const key = op.recipient
+            const key = op.subcat || "Uncategorized"
             infos.chartData.set(key, parseFloat(op.amount) + (infos.chartData.get(key) || 0))
             infos.count[key] = 1 + (infos.count[key] || 0)
         })
@@ -60,7 +61,7 @@ export default function GraphByRecipient() {
             key={reload}
             data={chart}
             options={getOptions({
-                title: 'Operations by recipient',
+                title: 'Operations by sub-category',
                 plugins: {tooltip}
             })}
             redraw={true}

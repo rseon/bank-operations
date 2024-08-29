@@ -7,19 +7,28 @@ export const getOperationsFromDb = () => {
         .map(op => {
             op.id = op.id.toString()
             op.amount = parseFloat(op.amount)
+            if (!op.category && op.recipient) {
+                op.category = op.recipient
+                delete op.recipient
+            }
+            op.category = op.category || ''
+            op.subcat = op.subcat || ''
             return op
         })
 }
 
 export const getOperationData = () => {
-    let types = [], recipients = [], years = []
+    let types = [], categories = [], years = [], subcats = []
 
     const operations = getOperationsFromDb().map(op => {
-        if (!types.includes(op.type)) {
+        if (op.type && !types.includes(op.type)) {
             types.push(op.type)
         }
-        if (!recipients.includes(op.recipient)) {
-            recipients.push(op.recipient)
+        if (op.category && !categories.includes(op.category)) {
+            categories.push(op.category)
+        }
+        if (op.subcat && !subcats.includes(op.subcat)) {
+            subcats.push(op.subcat)
         }
 
         const year = op.date.split('-')[0]
@@ -30,7 +39,8 @@ export const getOperationData = () => {
     })
 
     types = types.sort()
-    recipients = recipients.sort()
+    categories = categories.sort()
+    subcats = subcats.sort()
     years = years.sort().reverse()
 
     const monthNames = [...Array(12).keys()]
@@ -43,7 +53,8 @@ export const getOperationData = () => {
 
     return {
         types,
-        recipients,
+        categories,
+        subcats,
         operations,
         years,
         months,
