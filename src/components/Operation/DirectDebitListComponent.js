@@ -24,17 +24,17 @@ export default function DirectDebitList({ className, onSetDirectDebit }) {
       {directDebits.length > 0 && (
         <>
           {directDebits.map((op, idx) => (
-              <button
-                key={idx}
-                type="button"
-                className="list-group-item list-group-item-action"
-                onClick={() => onSetDirectDebit(op)}
-              >
-                <div className="d-flex justify-content-between align-items-center">
-                  {op.category}
-                  <span className="badge text-bg-primary rounded-pill">{currency(op.amount)}</span>
-                </div>
-              </button>
+            <button
+              key={idx}
+              type="button"
+              className="list-group-item list-group-item-action"
+              onClick={() => onSetDirectDebit(op)}
+            >
+              <div className="d-flex justify-content-between align-items-center">
+                {op.category}
+                <span className="badge text-bg-primary rounded-pill">{currency(op.amount)}</span>
+              </div>
+            </button>
           ))}
         </>
       )}
