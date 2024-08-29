@@ -142,6 +142,7 @@ const OperationFilterComponent = () => {
                             </button>
                         }
                     </div>
+                    {/* @todo Hide subcategory
                     <div className="col">
                         <label htmlFor="filter_subcat" className="form-label">Subcategory</label>
                         <select name="subcat" id="filter_subcat" className="form-control" value={filters.subcat} onChange={onChange} autoComplete="off">
@@ -160,6 +161,7 @@ const OperationFilterComponent = () => {
                             </button>
                         }
                     </div>
+                    */}
                     <div className="col">
                         <label htmlFor="filter_detail" className="form-label">Detail</label>
                         <input id="filter_detail" name="detail" type="search" className="form-control" value={filters.detail} onChange={onChange} autoComplete="off" />

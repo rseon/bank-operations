@@ -189,7 +189,8 @@ const OperationFormComponent = ({
                 </div>
 
                 <div className="row">
-                    <div className="col-4">
+                    {/* @todo Hide subcategory <div className="col-4">*/}
+                    <div className="col-6">
                         <div className="mb-3">
                             <label htmlFor="type" className="form-label">Type</label>
                             <input id="type" name="type" list="types" value={formData.type} className="form-control" required disabled={loading} onChange={updateField} autoComplete="off" />
@@ -201,7 +202,8 @@ const OperationFormComponent = ({
                             <span className="form-text">Example: <em>Credit card</em>, <em>Bank transfer</em>...</span>
                         </div>
                     </div>
-                    <div className="col-4">
+                    {/* @todo Hide subcategory <div className="col-4">*/}
+                    <div className="col-6">
                         <div className="mb-3">
                             <label htmlFor="category" className="form-label">Category</label>
                             <input id="category" name="category" list="categories" value={formData.category} className="form-control" required disabled={loading} onChange={updateField} autoComplete="off" />
@@ -213,6 +215,7 @@ const OperationFormComponent = ({
                             <span className="form-text">Example: <em>Car</em>...</span>
                         </div>
                     </div>
+                    {/* @todo Hide subcategory
                     <div className="col-4">
                         <div className="mb-3">
                             <label htmlFor="subcat" className="form-label">
@@ -227,6 +230,7 @@ const OperationFormComponent = ({
                             <span className="form-text">Example: <em>Parking</em>...</span>
                         </div>
                     </div>
+                    */}
                 </div>
 
                 <div className="mb-3">
