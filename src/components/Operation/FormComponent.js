@@ -1,8 +1,9 @@
 import {forwardRef, useImperativeHandle, useMemo, useRef, useState} from "react"
-import {formatDate} from "@/helpers"
+import { DIRECT_DEBIT_LABEL, formatDate } from '@/helpers'
 import {createOperation, destroyOperation, updateOperation} from "@/helpers/operation"
 import {useOperation} from "@/providers/operation";
 import MarkdownToolbar from "@/components/MarkdownToolbar";
+import DirectDebitList from '@/components/Operation/DirectDebitListComponent'
 
 const OperationFormComponent = ({
     method,
@@ -29,6 +30,7 @@ const OperationFormComponent = ({
     const [loading, setLoading] = useState(false)
     const [formData, setFormData] = useState(defaultValues)
     const [isUpdate, setIsUpdate] = useState(false)
+    const [showDirectDebit, setShowDirectDebit] = useState(false)
 
     const setOperation = (operation) => {
         setIsUpdate(true)
@@ -132,9 +134,40 @@ const OperationFormComponent = ({
         }
     }
 
+    const setDirectDebit = ({ category, amount }) => {
+        updateValue('category', category)
+        updateValue('amount', amount)
+        updateValue('type', DIRECT_DEBIT_LABEL)
+        setShowDirectDebit(false)
+    }
+
+    const resetForm = () => {
+        setFormData(defaultValues)
+    }
+
     return (
         <>
             <form onSubmit={handleSubmit}>
+                <div className="row">
+                    <div className="col-6">
+                        <button type="button" className="btn btn-link btn-sm text-decoration-none" onClick={() => setShowDirectDebit(!showDirectDebit)}>
+                            Existing direct debit
+                        </button>
+                    </div>
+                    <div className="col-6 text-end">
+                        <button type="button" className="btn btn-link btn-sm text-decoration-none" onClick={() => resetForm()}>
+                            Clear
+                        </button>
+                    </div>
+                </div>
+
+                {showDirectDebit && (
+                  <DirectDebitList
+                    className="mb-2"
+                    onSetDirectDebit={value => setDirectDebit(value)}
+                  />
+                )}
+
                 <div className="row">
                     <div className="col-6">
                         <div className="mb-3">
@@ -209,8 +242,8 @@ const OperationFormComponent = ({
                 </div>
 
                 <button type="submit" className="btn btn-outline-primary btn-lg d-flex w-100 justify-content-center align-items-center" disabled={loading}>
-                    {loading && <span className="spinner-border spinner-border-sm me-2" /> }
-                    {!loading && <span className="me-2">💾</span> }
+                    {loading && <span className="spinner-border spinner-border-sm me-2" />}
+                    {!loading && <span className="me-2">💾</span>}
                     Save operation
                 </button>
             </form>

@@ -6,6 +6,8 @@ export const CHECKBOX_STATES = {
     empty: 'Empty',
 }
 
+export const DIRECT_DEBIT_LABEL = 'Prélèvement auto'
+
 export const formatDate = (date, formatDate = 'dd/MM/yyyy', throwError = false) => {
     if (!date) {
         return null
