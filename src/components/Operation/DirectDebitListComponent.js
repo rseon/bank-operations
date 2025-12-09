@@ -9,8 +9,8 @@ export default function DirectDebitList({ className, onSetDirectDebit }) {
     return operations
       // Sort operations by date
       .sort((a, b) => new Date(b.date) - new Date(a.date))
-      // Get only those in 2024
-      .filter(op => op.date.includes('2024-'))
+      // Get only those in 2025
+      .filter(op => op.date.includes('2025-'))
       // Get only direct debits
       .filter(op => op.type === DIRECT_DEBIT_LABEL)
       // Get only the last operations
