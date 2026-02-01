@@ -22,6 +22,14 @@
 - [x] Combine sorts (with Ctrl + Click on column)
 - [ ] Replace Object by Map (?)
 - [ ] Refacto graph components (avoid code duplicate)
+- [ ] Backup: crypt file (with password ?), see https://stackoverflow.com/questions/48664739/javascript-encryption-for-json-object
+- [ ] Add tags (like "Appartement" for EDF or "Pizza Alexio" for Repas)
+- [ ] Improve CSV import tool
+  - [ ] Map columns
+  - [ ] Save configurations
+  - [ ] Check rows to import
+- [ ] Copy-paste content of Excel file then redirect to CSV import tool with this content
+- [ ] Backup reminder
 
 ## UI
 - [ ] Use [react-bootstrap](https://react-bootstrap.github.io/)

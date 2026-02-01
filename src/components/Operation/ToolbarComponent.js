@@ -33,7 +33,7 @@ const OperationToolbarComponent = ({
         }
 
         return Object.keys(newFilters)
-            .filter(k => newFilters[k] !== '')
+            .filter(k => newFilters[k] !== null && newFilters[k] !== '')
             .map(k => {
                 const key = k.charAt(0).toUpperCase() + k.slice(1)
                 let value = newFilters[k]

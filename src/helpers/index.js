@@ -13,7 +13,8 @@ export const formatDate = (date, formatDate = 'dd/MM/yyyy', throwError = false) 
         return null
     }
 
-    const dateParsed = parseJSON(new Date(date))
+    // const dateParsed = parseJSON(new Date(date).toString())
+    const dateParsed = new Date(date).toString()
 
     try {
         return format(dateParsed, formatDate)
@@ -26,7 +27,7 @@ export const formatDate = (date, formatDate = 'dd/MM/yyyy', throwError = false) 
 }
 
 export const formatDateFromFormat = (date, formatFrom, formatTo = 'yyyy-MM-dd', throwError = false) => {
-    const dateParsed = parse(date, formatFrom, new Date())
+    const dateParsed = parse(date || '', formatFrom, new Date())
     try {
         return format(dateParsed, formatTo)
     } catch (e) {

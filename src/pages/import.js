@@ -1,7 +1,7 @@
 import Layout from "@/pages/_layout";
 import {detectCsvDelimiter, detectCsvNewLine, fileIsCsv, fileIsJson, formatCsv, formatJson, getBaseConfigForCsvFormat, getHumanReadableSize, getTypeByMime, CSV_UNKNOWN, CSV_NEWLINE_CRLF, CSV_NEWLINE_LF, CSV_NEWLINE_CR, CSV_DELIMITER_SEMI, CSV_DELIMITER_COMMA, CSV_DELIMITER_TAB} from "@/helpers/file";
-import {useMemo, useState} from "react";
-import {currency, deepEqual, formatDate, formatDateFromFormat, isEmpty} from "@/helpers";
+import {useMemo/*, useRef*/, useState} from "react";
+import {CHECKBOX_STATES, currency, deepEqual, formatDate, formatDateFromFormat, isEmpty} from "@/helpers";
 import {useOperation} from "@/providers/operation";
 import {useRouter} from "next/router";
 import {setOperationsData} from "@/helpers/operation";
@@ -19,6 +19,10 @@ export default function Page() {
     const [showDateFormats, setShowDateFormats] = useState(false)
     const [contentErrors, setContentErrors] = useState(new Set())
 
+    /*const checkboxAll = useRef()
+    const [isAllChecked, setIsAllChecked] = useState(CHECKBOX_STATES.empty)
+    const [listChecked, setListChecked] = useState([])*/
+
     const operationsToImport = useMemo(() => {
         if (!file || !content || configure) {
             return []
@@ -29,19 +33,42 @@ export default function Page() {
 
         return ops.map((row, idx) => {
             row.id = Date.now() + idx
+            /*if (row.recipient && !row.category) {
+                row.category = row.recipient
+                delete row.recipient
+            }*/
+
             row.exists = !!operations.find(operation => {
                 const rowCopy = {...row}
                 const opCopy = {...operation}
+                /*if (rowCopy.recipient && !rowCopy.category) {
+                    rowCopy.category = rowCopy.recipient
+                    delete rowCopy.recipient
+                }*/
                 delete rowCopy.id
                 delete rowCopy.exists
                 delete rowCopy.detail
+                /*if (opCopy.recipient && !opCopy.category) {
+                    opCopy.category = opCopy.recipient
+                    delete opCopy.recipient
+                }*/
                 delete opCopy.id
                 delete opCopy.exists
                 delete opCopy.detail
                 rowCopy.amount = parseFloat(rowCopy.amount)
+                /*if (!opCopy.subcat.length && !rowCopy.subcat) {
+                    delete opCopy.subcat
+                }*/
                 return deepEqual(opCopy, rowCopy)
             })
             return row
+            /*return row.map(r => {
+                if (r.recipient && !r.category) {
+                    r.category = r.recipient
+                    delete r.recipient
+                }
+                return r
+            })*/
         })
     }, [file, content, operations, configure])
 
@@ -170,6 +197,50 @@ export default function Page() {
         setConfigure(false)
     }
 
+    /*const handleCheckbox = (event) => {
+        const value = event.target.value
+        const checked = event.target.checked
+
+        let list = []
+        if (value === '*') {
+            checkboxAll.current.indeterminate = false
+            checkboxAll.current.checked = checked
+            if (checked) {
+                setIsAllChecked(CHECKBOX_STATES.checked)
+                list = operationsToImport.map(f => f.id)
+            }
+            else {
+                setIsAllChecked(CHECKBOX_STATES.empty)
+                list = []
+            }
+        }
+        else {
+            list = [...listChecked, value]
+            if (!checked) {
+                list = list.filter(id => id !== value)
+            }
+
+            switch (list.length) {
+                case 0:
+                    setIsAllChecked(CHECKBOX_STATES.empty)
+                    checkboxAll.current.checked = false
+                    checkboxAll.current.indeterminate = false
+                    break
+                case operationsToImport.length:
+                    setIsAllChecked(CHECKBOX_STATES.checked)
+                    checkboxAll.current.checked = true
+                    checkboxAll.current.indeterminate = false
+                    break
+                default:
+                    setIsAllChecked(CHECKBOX_STATES.indeterminate)
+                    checkboxAll.current.checked = false
+                    checkboxAll.current.indeterminate = true
+                    break
+            }
+        }
+
+        setListChecked(list)
+    }*/
     return (
         <Layout
             metas={{
@@ -188,6 +259,8 @@ export default function Page() {
                         In addition, it must contain the following columns in this exact order:
                         <span className="badge text-bg-light ms-1 text-uppercase">date</span>
                         <span className="badge text-bg-light ms-1 text-uppercase">type</span>
+                        {/*<span className="badge text-bg-light ms-1 text-uppercase">category</span>
+                        <span className="badge text-bg-light ms-1 text-uppercase">subcategory</span>*/}
                         <span className="badge text-bg-light ms-1 text-uppercase">recipient</span>
                         <span className="badge text-bg-light ms-1 text-uppercase">detail</span>
                         <span className="badge text-bg-light ms-1 text-uppercase">debit</span>
@@ -314,9 +387,13 @@ export default function Page() {
                                 <table className="table table-hover table-sticky-header mb-0">
                                     <thead className="table-light">
                                         <tr>
-                                            <th width={1}>Date</th>
-                                            <th width={1}>Type</th>
-                                            <th width={1}>Category</th>
+                                            {/*<th width={1}>
+                                                <input ref={checkboxAll} value="*" type="checkbox" className="form-check-input" onChange={handleCheckbox} />
+                                            </th>*/}
+                                            <th width={1} className="text-nowrap">Date</th>
+                                            <th width={1} className="text-nowrap">Type</th>
+                                            <th width={1} className="text-nowrap">Category</th>
+                                            {/*<th width={1} className="text-nowrap">Sub-category</th>*/}
                                             <th>Detail</th>
                                             <th width={1}>Amount</th>
                                         </tr>
@@ -331,6 +408,11 @@ export default function Page() {
                                         }
                                         {operationsToImport.map((op, idx) => (
                                             <tr key={idx} className={op.exists ? 'table-success opacity-50' : ''}>
+                                                {/*<th width={1}>
+                                                    {!op.exists &&
+                                                        <input type="checkbox" value={idx} className="form-check-input" checked={listChecked.includes(idx)} onChange={handleCheckbox} />
+                                                    }
+                                                </th>*/}
                                                 <td className="text-nowrap">
                                                     {formatDate(op.date)}
                                                 </td>
@@ -340,6 +422,12 @@ export default function Page() {
                                                 <td className="text-nowrap">
                                                     {op.recipient}
                                                 </td>
+                                                {/*<td className="text-nowrap">
+                                                    {op.category}
+                                                </td>
+                                                <td className="text-nowrap">
+                                                    {op.subcat}
+                                                </td>*/}
                                                 <td className="text-nowrap" dangerouslySetInnerHTML={{ __html: parseMarkdown(op.detail) }} />
                                                 <td className="text-nowrap text-end">
                                                     <strong className={`text-${op.amount >= 0 ? 'success' : 'danger'}`}>
