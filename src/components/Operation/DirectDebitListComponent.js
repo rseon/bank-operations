@@ -9,8 +9,15 @@ export default function DirectDebitList({ className, onSetDirectDebit }) {
     return operations
       // Sort operations by date
       .sort((a, b) => new Date(b.date) - new Date(a.date))
-      // Get only those in past year
-      .filter(op => op.date.includes(new Date().getFullYear()-1 + '-'))
+      // Get only those in past 6 months
+      .filter(op => {
+        const now = new Date()
+
+        const start = new Date(now.getFullYear(), now.getMonth() - 6, 1)
+        const startStr = start.toISOString().slice(0, 10)
+
+        return op.date >= startStr
+      })
       // Get only direct debits
       .filter(op => op.type === DIRECT_DEBIT_LABEL)
       // Get only the last operations
