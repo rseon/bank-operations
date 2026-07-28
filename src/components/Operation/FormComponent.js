@@ -1,4 +1,4 @@
-import {forwardRef, useImperativeHandle, useMemo, useRef, useState} from "react"
+import { forwardRef, useEffect, useImperativeHandle, useMemo, useRef, useState } from 'react'
 import { DIRECT_DEBIT_LABEL, formatDate } from '@/helpers'
 import {createOperation, destroyOperation, updateOperation} from "@/helpers/operation"
 import {useOperation} from "@/providers/operation";
@@ -144,6 +144,62 @@ const OperationFormComponent = ({
     const resetForm = () => {
         setFormData(defaultValues)
     }
+
+    const formatExcelPrice = (price) => parseFloat(price.replace(',', '.'))
+    const formatExcelData = (date) => {
+        if (!date.includes('-')) {
+            return date
+        }
+        const [day, month] = date.split('-')
+        const frMonths = ['janv', 'févr', 'mars', 'avr', 'mai', 'juin', 'juil', 'août', 'sept', 'oct', 'nov', 'dec']
+        return new Date(new Date().getFullYear(), frMonths.findIndex((val) => val === month), day)
+    }
+
+    const [pasteEventFired, setPasteEventFired] = useState(false)
+    useEffect(() => {
+        const pasteListener = (e) => {
+            const content = e.clipboardData.getData('text')
+            if (! content.includes("\t") || pasteEventFired) {
+                return
+            }
+
+            setPasteEventFired(true)
+
+            const dataToCreate = []
+            content.split("\n").map(row => {
+                const data = row.split("\t")
+                if (data.length < 5 || data[0].trim() === '') {
+                    return
+                }
+                const date = formatDate(formatExcelData(data[0].trim()), 'yyyy-MM-dd')
+                const amount = data[5] && data[5].trim() !== '' ? formatExcelPrice(data[5]) : -1 * formatExcelPrice(data[4])
+                if (date === null || amount === NaN) {
+                    return
+                }
+                dataToCreate.push({
+                    date,
+                    amount,
+                    type: data[1].trim(),
+                    category: data[2].trim(),
+                    subcat: '',
+                    detail: data[3],
+                })
+            })
+
+            if (dataToCreate.length > 0 && confirm(`Do you want to paste ${dataToCreate.length} new entries ? Warning: duplicate keys will not be removed.`)) {
+                dataToCreate.map(data => {
+                    createOperation({
+                        id: Date.now(),
+                        ...data
+                    })
+                })
+
+                window.location.reload()
+            }
+        }
+        window.addEventListener('paste', pasteListener)
+        return () => window.removeEventListener('paste', pasteListener)
+    }, [])
 
     return (
         <>
